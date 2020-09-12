@@ -106,6 +106,25 @@ class Scene:
         pass
 
 
+# Scenes
+class ParkScene(Scene):
+
+    def __init__(self):
+        pass
+
+    def draw(self):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def on_click(self, x, y, button):
+        pass
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+
 @window.event
 def on_draw():
     window.clear()
