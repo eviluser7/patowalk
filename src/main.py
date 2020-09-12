@@ -128,6 +128,19 @@ class ParkScene(Scene):
 @window.event
 def on_draw():
     window.clear()
+    game.draw()
+    duck.draw()
 
 
+@window.event
+def update(dt):
+    game.update(dt)
+    duck.update(dt)
+
+
+duck = Player()
+park = ParkScene()
+game = Game(park)
+
+pyglet.clock.schedule_interval(update, 1/30)
 pyglet.app.run()
