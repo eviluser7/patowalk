@@ -9,6 +9,7 @@ resource.reindex()
 window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
 duck_idle_right = resource.image('duck_idle_right.png')
 duck_idle_left = resource.image('duck_idle_left.png')
+shadow = resource.image('shadow.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -20,6 +21,7 @@ def center_image(img):
 
 center_image(duck_idle_right)
 center_image(duck_idle_left)
+center_image(shadow)
 
 
 # Code structure
@@ -87,9 +89,11 @@ class Player:
         self.w_right = sprite.Sprite(self.walk_right)
         self.w_left = sprite.Sprite(self.walk_left)
         self.sprite = self.i_right
+        self.shadow = sprite.Sprite(shadow)
         self.moving = False
 
     def draw(self):
+        self.shadow.draw()
         self.sprite.draw()
 
     def update(self, dt):
@@ -117,6 +121,8 @@ class Player:
         self.y = new_y
         self.sprite.x = self.x
         self.sprite.y = self.y
+        self.shadow.x = self.x - 5 if self.direction == 1 else self.x + 5
+        self.shadow.y = self.y - 45
 
     def change_direction(self, vx, vy, direction):
         self.vx = vx
@@ -145,11 +151,13 @@ class Scene:
 # Scenes
 class ParkScene(Scene):
 
+    bg = resource.image('tile_bg.png')
+
     def __init__(self):
         pass
 
     def draw(self):
-        pass
+        self.bg.blit(0, 0)
 
     def update(self, dt):
 
