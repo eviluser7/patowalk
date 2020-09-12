@@ -116,13 +116,56 @@ class ParkScene(Scene):
         pass
 
     def update(self, dt):
-        pass
+
+        # Linear movement
+        if keys[key.W]:
+            duck.change_direction(0, 170, duck.direction)
+
+        if keys[key.A]:
+            duck.change_direction(-170, 0, 0)
+
+        if keys[key.S]:
+            duck.change_direction(0, -170, duck.direction)
+
+        if keys[key.D]:
+            duck.change_direction(170, 0, 1)
+
+        # Diagonal movement
+        if keys[key.W] and keys[key.A]:
+            duck.change_direction(-170, 170, 0)
+
+        if keys[key.W] and keys[key.D]:
+            duck.change_direction(170, 170, 1)
+
+        if keys[key.S] and keys[key.A]:
+            duck.change_direction(-170, -170, 0)
+
+        if keys[key.S] and keys[key.D]:
+            duck.change_direction(170, -170, 1)
+
+        # Stop if two keys are pressed at the same time
+        if keys[key.W] and keys[key.S]:
+            duck.change_direction(0, 0, duck.direction)
+
+        if keys[key.A] and keys[key.D]:
+            duck.change_direction(0, 0, duck.direction)
+
+        # If no key is pressed
+        if not self.is_key_pressed():
+            duck.change_direction(0, 0, duck.direction)
 
     def on_click(self, x, y, button):
         pass
 
     def on_key_press(self, symbol, modifiers):
         pass
+
+    def is_key_pressed(self):
+        for _, v in keys.items():
+            if v:
+                return True
+
+        return False
 
 
 @window.event
@@ -137,6 +180,9 @@ def update(dt):
     game.update(dt)
     duck.update(dt)
 
+
+keys = key.KeyStateHandler()
+window.push_handlers(keys)
 
 duck = Player()
 park = ParkScene()
