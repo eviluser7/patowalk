@@ -1,6 +1,7 @@
 import pyglet
 from pyglet import resource
 from pyglet import sprite
+from pyglet.window import key
 
 resource.path = ['../resources', '../resources/img']
 resource.reindex()
@@ -43,6 +44,21 @@ class Game:
 
     def set_scene_to(self, scene):
         self.scene = scene
+
+
+class Player:
+
+    def __init__(self):
+        pass
+
+    def draw(self):
+        pass
+
+    def update(self, dt):
+        pass
+
+    def change_direction(self, vx, vy, dir):
+        pass
 
 
 @window.event
