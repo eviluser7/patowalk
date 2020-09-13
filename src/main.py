@@ -5,6 +5,12 @@ import pyglet
 from pyglet import resource
 from pyglet import sprite
 from pyglet.window import key
+from pyglet.gl import gl
+
+gl.glEnable(gl.GL_TEXTURE_2D)
+gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
+pyglet.image.Texture.default_mag_filter = gl.GL_NEAREST
+pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 
 map_width = 2400
 map_height = 1800
@@ -16,6 +22,7 @@ window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
 duck_idle_right = resource.image('duck_idle_right.png')
 duck_idle_left = resource.image('duck_idle_left.png')
 shadow = resource.image('shadow.png')
+hud_bread = resource.image('hud_bread.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -69,13 +76,16 @@ class Game:
         self.scene = scene
         self.mouse_x = 0
         self.mouse_y = 0
+        self.hud = Hud()
 
     def draw(self):
         self.scene.draw()
+        self.hud.draw()
 
     def update(self, dt):
         window.set_mouse_cursor(default_cur)
         self.scene.update(dt)
+        self.hud.update(dt)
 
     def mouse_xy(self, x, y, dx, dy):
         self.mouse_x = x
@@ -196,6 +206,31 @@ class Player:
         self.vx = vx
         self.vy = vy
         self.direction = direction
+
+
+class Hud:
+
+    bread_display = sprite.Sprite(hud_bread, x=580, y=490)
+
+    def __init__(self):
+        self.bread_amount = 0
+        self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
+                                            y=533, anchor_x='center',
+                                            anchor_y='center', font_size=24,
+                                            bold=True)
+
+    def draw(self):
+        self.bread_display.draw()
+        self.bread_text.draw()
+
+    def update(self, dt):
+        pass
+
+    def update_text(self):
+        if self.bread_amount < 10:
+            self.bread_text.x = 660
+        elif self.bread_amount < 100 and self.bread_amount > 9:
+            self.bread_text.x = 670
 
 
 class SceneObject:
