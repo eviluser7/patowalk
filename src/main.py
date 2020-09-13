@@ -99,7 +99,6 @@ class Player:
     def draw(self):
         self.shadow.draw()
         self.sprite.draw()
-        self.hitbox.draw()
 
     def update(self, dt):
         new_x = self.x + self.vx * dt
