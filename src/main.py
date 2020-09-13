@@ -1,4 +1,6 @@
 from region import Region
+from camera import Camera
+
 import pyglet
 from pyglet import resource
 from pyglet import sprite
@@ -16,6 +18,38 @@ duck_idle_left = resource.image('duck_idle_left.png')
 shadow = resource.image('shadow.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
+
+
+def position_camera(self, camera: Camera, position: tuple = (0, 0),
+                    zoom: float = 1, min_pos: tuple = (None, None),
+                    max_pos: tuple = (None, None)):
+
+    zoom = min(window.width // self.DEFAULT_SIZE[0],
+               window.height // self.DEFAULT_SIZE[1]) * zoom
+
+    if self.camera.zoom != zoom:
+        self.camera.zoom = zoom
+
+        x = -window.width // 2 // zoom
+        y = -window.height // 2 // zoom
+
+        target_x = position[0]
+        target_y = position[1]
+
+        if min_pos[0] is not None:
+            target_x = max(target_x, min_pos[0])
+        if min_pos[1] is not None:
+            target_y = max(target_y, min_pos[1])
+        if max_pos[0] is not None:
+            target_x = min(target_x, max_pos[0])
+        if max_pos[1] is not None:
+            target_y = min(target_y, max_pos[1])
+
+        x += target_x
+        y += target_y
+
+        if self.camera.position != (x, y):
+            self.camera.position = (x, y)
 
 
 def center_image(img):
@@ -93,10 +127,11 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.direction = 1
-        self.idle = sprite.Sprite(self.idle_images[0])
+        self.i_right = sprite.Sprite(self.idle_images[0])
+        self.i_left = sprite.Sprite(self.idle_images[1])
         self.w_right = sprite.Sprite(self.walk_right)
         self.w_left = sprite.Sprite(self.walk_left)
-        self.sprite = self.idle
+        self.sprite = self.i_right
         self.shadow = sprite.Sprite(shadow)
         self.moving = False
         self.hitbox = Region(self.x - self.sprite.width // 2,
@@ -126,14 +161,19 @@ class Player:
             if obj_hit is not None:
                 self.vx = 0
                 self.vy = 0
-                self.sprite = self.idle
+                self.sprite = self.i_right
                 self.sprite.x = self.x
                 self.sprite.y = self.y
                 return
 
         # Check sprite
-        if not self.moving:
-            self.sprite = self.idle
+        if not self.moving and \
+           self.direction == 1:
+            self.sprite = self.i_right
+
+        if not self.moving and \
+           self.direction == 0:
+            self.sprite = self.i_left
 
         if self.moving and \
            self.direction == 1:
@@ -218,21 +258,27 @@ class ParkScene(Scene):
 
     def update(self, dt):
 
+        vx = vy = 0
+
         # Linear movement
         if keys[key.W]:
             duck.change_direction(0, 170, duck.direction)
+            vy += 170 * dt
             duck.moving = True
 
         if keys[key.A]:
             duck.change_direction(-170, 0, 0)
+            vx -= 170 * dt
             duck.moving = True
 
         if keys[key.S]:
             duck.change_direction(0, -170, duck.direction)
+            vy -= 170 * dt
             duck.moving = True
 
         if keys[key.D]:
             duck.change_direction(170, 0, 1)
+            vx += 170 * dt
             duck.moving = True
 
         # Diagonal movement
@@ -266,6 +312,9 @@ class ParkScene(Scene):
             duck.change_direction(0, 0, duck.direction)
             duck.moving = False
 
+        camera.position = (camera.offset_x + vx,
+                           camera.offset_y + vy)
+
     def on_click(self, x, y, button):
         pass
 
@@ -283,8 +332,10 @@ class ParkScene(Scene):
 @window.event
 def on_draw():
     window.clear()
+    camera.begin()
     game.draw()
     duck.draw()
+    camera.end()
 
 
 @window.event
@@ -299,6 +350,7 @@ window.push_handlers(keys)
 duck = Player()
 park = ParkScene()
 game = Game(park)
+camera = Camera(scroll_speed=5)
 
 # Objects for scenes
 boundary_up = SceneObject(id=0, solid=True, tag="boundary_up", x=0, y=600,
