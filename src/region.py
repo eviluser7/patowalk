@@ -44,6 +44,16 @@ class Region:
         else:
             return False
 
+    def collides(self, r2):
+        # Check the edge collision
+        if self.x < r2.x + r2.width and \
+           self.x + self.width > r2.x and \
+           self.y < r2.y + r2.height and \
+           self.height + self.y > r2.y:
+            return True
+
+        return False
+
     def draw(self):
         r = Rect(self.x, self.y, self.w, self.h)
         r.draw()
