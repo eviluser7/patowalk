@@ -4,6 +4,9 @@ from pyglet import resource
 from pyglet import sprite
 from pyglet.window import key
 
+map_width = 2400
+map_height = 1800
+
 resource.path = ['../resources', '../resources/img']
 resource.reindex()
 
@@ -53,6 +56,11 @@ class Game:
 
 class Player:
 
+    idle_images = [
+        resource.image('duck_idle_right.png'),
+        resource.image('duck_idle_left.png')
+    ]
+
     walk_left_frames = [
         resource.image('duck_walk_left_1.png'),
         resource.image('duck_idle_left.png'),
@@ -85,11 +93,10 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.direction = 1
-        self.i_right = sprite.Sprite(duck_idle_right)
-        self.i_left = sprite.Sprite(duck_idle_left)
+        self.idle = sprite.Sprite(self.idle_images[0])
         self.w_right = sprite.Sprite(self.walk_right)
         self.w_left = sprite.Sprite(self.walk_left)
-        self.sprite = self.i_right
+        self.sprite = self.idle
         self.shadow = sprite.Sprite(shadow)
         self.moving = False
         self.hitbox = Region(self.x - self.sprite.width // 2,
@@ -112,14 +119,21 @@ class Player:
                             y=new_y - 90 // 2,
                             w=70, h=50)
 
-        # Check sprite
-        if not self.moving and \
-           self.direction == 1:
-            self.sprite = self.i_right
+        obj_hit = self.detect_collision(new_hitbox)
 
-        if not self.moving and \
-           self.direction == 0:
-            self.sprite = self.i_left
+        # Check collisions
+        if game.scene == park:
+            if obj_hit is not None:
+                self.vx = 0
+                self.vy = 0
+                self.sprite = self.idle
+                self.sprite.x = self.x
+                self.sprite.y = self.y
+                return
+
+        # Check sprite
+        if not self.moving:
+            self.sprite = self.idle
 
         if self.moving and \
            self.direction == 1:
@@ -176,7 +190,7 @@ class SceneObject:
 class Scene:
 
     def __init__(self):
-        pass
+        self.obj_list = []
 
     def draw(self):
         pass
@@ -197,7 +211,7 @@ class ParkScene(Scene):
     bg = resource.image('tile_bg.png')
 
     def __init__(self):
-        pass
+        self.obj_list = []
 
     def draw(self):
         self.bg.blit(0, 0)
@@ -285,6 +299,19 @@ window.push_handlers(keys)
 duck = Player()
 park = ParkScene()
 game = Game(park)
+
+# Objects for scenes
+boundary_up = SceneObject(id=0, solid=True, tag="boundary_up", x=0, y=600,
+                          w=map_width, h=1, visible=False)
+
+boundary_left = SceneObject(id=1, solid=True, tag="boundary_left", x=0, y=0,
+                            w=1, h=map_height, visible=False)
+
+
+# Appending those objects to the scenes
+park.obj_list.append(boundary_up)
+park.obj_list.append(boundary_left)
+
 
 pyglet.clock.schedule_interval(update, 1/30)
 pyglet.app.run()
