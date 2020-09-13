@@ -100,6 +100,11 @@ class Player:
         self.shadow.draw()
         self.sprite.draw()
 
+    def detect_collision(self, hitbox):
+        for obj in game.scene.obj_list:
+            if obj.solid and hitbox.collides(obj.hitbox):
+                return obj
+
     def update(self, dt):
         new_x = self.x + self.vx * dt
         new_y = self.y + self.vy * dt
@@ -136,6 +141,36 @@ class Player:
         self.vx = vx
         self.vy = vy
         self.direction = direction
+
+
+class SceneObject:
+
+    def __init__(self, id, solid, tag, x, y, w=0, h=0, spr=None, visible=True):
+        self.id = id
+        self.solid = solid
+        self.tag = tag
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.spr = spr
+        self.visible = visible
+
+        if spr is not None:
+            self.spr.x = self.x
+            self.spr.y = self.y
+
+        if spr is not None and w == 0 and h == 0:
+            self.hitbox = Region(self.x - self.spr.width // 2,
+                                 self.y - self.spr.height // 2,
+                                 self.spr.width,
+                                 self.spr.height)
+
+        else:
+            self.hitbox = Region(self.x - self.w // 2,
+                                 self.y - self.h // 2,
+                                 self.w,
+                                 self.h)
 
 
 class Scene:
