@@ -1,3 +1,4 @@
+from region import Region
 import pyglet
 from pyglet import resource
 from pyglet import sprite
@@ -91,14 +92,21 @@ class Player:
         self.sprite = self.i_right
         self.shadow = sprite.Sprite(shadow)
         self.moving = False
+        self.hitbox = Region(self.x - self.sprite.width // 2,
+                             self.y - self.sprite.height // 2,
+                             60, 50)
 
     def draw(self):
         self.shadow.draw()
         self.sprite.draw()
+        self.hitbox.draw()
 
     def update(self, dt):
         new_x = self.x + self.vx * dt
         new_y = self.y + self.vy * dt
+        new_hitbox = Region(x=new_x - 70 // 2,
+                            y=new_y - 90 // 2,
+                            w=70, h=50)
 
         # Check sprite
         if not self.moving and \
@@ -123,6 +131,7 @@ class Player:
         self.sprite.y = self.y
         self.shadow.x = self.x - 5 if self.direction == 1 else self.x + 5
         self.shadow.y = self.y - 45
+        self.hitbox = new_hitbox
 
     def change_direction(self, vx, vy, direction):
         self.vx = vx
