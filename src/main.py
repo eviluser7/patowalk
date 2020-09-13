@@ -159,6 +159,7 @@ class Player:
         # Check collisions
         if game.scene == park:
             if obj_hit is not None:
+                print(self.vx, self.vy)
                 self.vx = 0
                 self.vy = 0
                 self.sprite = self.i_right
@@ -258,27 +259,21 @@ class ParkScene(Scene):
 
     def update(self, dt):
 
-        vx = vy = 0
-
         # Linear movement
         if keys[key.W]:
             duck.change_direction(0, 170, duck.direction)
-            vy += 170 * dt
             duck.moving = True
 
         if keys[key.A]:
             duck.change_direction(-170, 0, 0)
-            vx -= 170 * dt
             duck.moving = True
 
         if keys[key.S]:
             duck.change_direction(0, -170, duck.direction)
-            vy -= 170 * dt
             duck.moving = True
 
         if keys[key.D]:
             duck.change_direction(170, 0, 1)
-            vx += 170 * dt
             duck.moving = True
 
         # Diagonal movement
@@ -312,8 +307,8 @@ class ParkScene(Scene):
             duck.change_direction(0, 0, duck.direction)
             duck.moving = False
 
-        camera.position = (camera.offset_x + vx,
-                           camera.offset_y + vy)
+        camera.position = (duck.x - 400,
+                           duck.y - 300)
 
     def on_click(self, x, y, button):
         pass
