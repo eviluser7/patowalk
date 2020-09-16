@@ -311,36 +311,36 @@ class ParkScene(Scene):
 
         # Linear movement
         if keys[key.W]:
-            duck.change_direction(0, 170, duck.direction)
+            duck.change_direction(0, 340, duck.direction)
             duck.moving = True
 
         if keys[key.A]:
-            duck.change_direction(-170, 0, 0)
+            duck.change_direction(-340, 0, 0)
             duck.moving = True
 
         if keys[key.S]:
-            duck.change_direction(0, -170, duck.direction)
+            duck.change_direction(0, -340, duck.direction)
             duck.moving = True
 
         if keys[key.D]:
-            duck.change_direction(170, 0, 1)
+            duck.change_direction(340, 0, 1)
             duck.moving = True
 
         # Diagonal movement
         if keys[key.W] and keys[key.A]:
-            duck.change_direction(-170, 170, 0)
+            duck.change_direction(-300, 300, 0)
             duck.moving = True
 
         if keys[key.W] and keys[key.D]:
-            duck.change_direction(170, 170, 1)
+            duck.change_direction(300, 300, 1)
             duck.moving = True
 
         if keys[key.S] and keys[key.A]:
-            duck.change_direction(-170, -170, 0)
+            duck.change_direction(-300, -300, 0)
             duck.moving = True
 
         if keys[key.S] and keys[key.D]:
-            duck.change_direction(170, -170, 1)
+            duck.change_direction(300, -300, 1)
             duck.moving = True
 
         # Stop if two keys are pressed at the same time
