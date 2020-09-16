@@ -13,7 +13,7 @@ pyglet.image.Texture.default_mag_filter = gl.GL_NEAREST
 pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 
 map_width = 2400
-map_height = 1800
+map_height = 1200
 
 resource.path = ['../resources', '../resources/img']
 resource.reindex()
@@ -170,13 +170,15 @@ class Player:
         # Check collisions
         if game.scene == park:
             if obj_hit is not None:
-                print(self.vx, self.vy)
                 self.vx = 0
                 self.vy = 0
                 self.sprite = self.i_right
                 self.sprite.x = self.x
                 self.sprite.y = self.y
                 return
+
+            if obj_hit == boundary_down:
+                print(boundary_down.x, boundary_down.y)
 
         # Check sprite
         if not self.moving and \
@@ -280,7 +282,7 @@ class Scene:
         pass
 
     def on_click(self, x, y, button):
-        pass
+        print(boundary_down.x, boundary_down.y)
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -296,6 +298,14 @@ class ParkScene(Scene):
 
     def draw(self):
         self.bg.blit(0, 0)
+        self.bg.blit(800, 0)
+        self.bg.blit(1600, 0)
+        self.bg.blit(0, -600)
+        self.bg.blit(0, -1200)
+        self.bg.blit(800, -600)
+        self.bg.blit(800, -1200)
+        self.bg.blit(1600, -600)
+        self.bg.blit(1600, -1200)
 
     def update(self, dt):
 
@@ -387,6 +397,12 @@ def update(dt):
     game.hud.update(dt)
 
 
+@window.event
+def on_mouse_press(x, y, button, modifiers):
+    print("Boundaries: ", boundary_down.x, boundary_down.y)
+    print("Player: ", duck.x, duck.y)
+
+
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
@@ -397,17 +413,25 @@ camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
 
 # Objects for scenes
-boundary_up = SceneObject(id=0, solid=True, tag="boundary_up", x=0, y=600,
+boundary_up = SceneObject(id=0, solid=True, tag="boundary_up", x=1200, y=600,
                           w=map_width, h=1, visible=False)
 
-boundary_left = SceneObject(id=1, solid=True, tag="boundary_left", x=0, y=0,
-                            w=1, h=map_height, visible=False)
+boundary_left = SceneObject(id=1, solid=True, tag="boundary_left", x=0, y=-300,
+                            w=1, h=1800, visible=False)
+
+boundary_down = SceneObject(id=2, solid=True, tag="boundary_down", x=1200,
+                            y=-1200, w=map_width, h=1, visible=False)
+
+boundary_right = SceneObject(id=3, solid=True, tag="boundary_right",
+                             x=map_width, y=-300, w=1, h=1800,
+                             visible=False)
 
 
 # Appending those objects to the scenes
 park.obj_list.append(boundary_up)
 park.obj_list.append(boundary_left)
-
+park.obj_list.append(boundary_down)
+park.obj_list.append(boundary_right)
 
 pyglet.clock.schedule_interval(update, 1/30)
 pyglet.app.run()
