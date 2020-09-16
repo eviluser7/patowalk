@@ -133,8 +133,8 @@ class Player:
             img.anchor_x = img.width // 2
             img.anchor_y = img.height // 2
 
-        self.x = 1900
-        self.y = 200
+        self.x = 2000
+        self.y = 300
         self.vx = 0
         self.vy = 0
         self.direction = 1
@@ -296,9 +296,44 @@ class ParkScene(Scene):
     street_east = resource.image('street_east.png')
     street_south = resource.image('street_down.png')
     street_west = resource.image('street_right.png')
+    boundary_vertical = resource.image('boundary_vertical.png')
+    boundary_horizontal = resource.image('boundary_horizontal.png')
 
     def __init__(self):
         self.obj_list = []
+        self.v_boundaries = [
+            sprite.Sprite(self.boundary_vertical, x=0, y=570),
+            sprite.Sprite(self.boundary_vertical, x=300, y=570),
+            sprite.Sprite(self.boundary_vertical, x=600, y=570),
+            sprite.Sprite(self.boundary_vertical, x=900, y=570),
+            sprite.Sprite(self.boundary_vertical, x=1200, y=570),
+            sprite.Sprite(self.boundary_vertical, x=1500, y=570),
+            sprite.Sprite(self.boundary_vertical, x=1800, y=570),
+            sprite.Sprite(self.boundary_vertical, x=2100, y=570),
+            sprite.Sprite(self.boundary_vertical, x=0, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=300, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=600, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=900, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=1200, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=1500, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=1800, y=-1200),
+            sprite.Sprite(self.boundary_vertical, x=2100, y=-1200)
+        ]
+
+        self.h_boundaries = [
+            sprite.Sprite(self.boundary_horizontal, x=-10, y=360),
+            sprite.Sprite(self.boundary_horizontal, x=-10, y=70),
+            sprite.Sprite(self.boundary_horizontal, x=-10, y=-230),
+            sprite.Sprite(self.boundary_horizontal, x=-10, y=-530),
+            sprite.Sprite(self.boundary_horizontal, x=-10, y=-830),
+            sprite.Sprite(self.boundary_horizontal, x=-10, y=-1130),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=342),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=52),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=-238),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=-530),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=-830),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=-1130),
+        ]
 
     def draw(self):
 
@@ -350,6 +385,13 @@ class ParkScene(Scene):
         self.bg.blit(800, -1200)
         self.bg.blit(1600, -600)
         self.bg.blit(1600, -1200)
+
+        # Drawing boundaries
+        for vb in self.v_boundaries:
+            vb.draw()
+
+        for hb in self.h_boundaries:
+            hb.draw()
 
     def update(self, dt):
 
@@ -464,7 +506,7 @@ boundary_left = SceneObject(id=1, solid=True, tag="boundary_left", x=0, y=-300,
                             w=1, h=1800, visible=False)
 
 boundary_down = SceneObject(id=2, solid=True, tag="boundary_down", x=1200,
-                            y=-1200, w=map_width, h=1, visible=False)
+                            y=-1120, w=map_width, h=1, visible=False)
 
 boundary_right = SceneObject(id=3, solid=True, tag="boundary_right",
                              x=map_width, y=-300, w=1, h=1800,
