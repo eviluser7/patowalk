@@ -19,6 +19,9 @@ resource.path = ['../resources', '../resources/img']
 resource.reindex()
 
 window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
+
+gui_batch = pyglet.graphics.Batch()
+
 duck_idle_right = resource.image('duck_idle_right.png')
 duck_idle_left = resource.image('duck_idle_left.png')
 shadow = resource.image('shadow.png')
@@ -80,12 +83,10 @@ class Game:
 
     def draw(self):
         self.scene.draw()
-        self.hud.draw()
 
     def update(self, dt):
         window.set_mouse_cursor(default_cur)
         self.scene.update(dt)
-        self.hud.update(dt)
 
     def mouse_xy(self, x, y, dx, dy):
         self.mouse_x = x
@@ -137,8 +138,8 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.direction = 1
-        self.i_right = sprite.Sprite(self.idle_images[0])
-        self.i_left = sprite.Sprite(self.idle_images[1])
+        self.i_right = sprite.Sprite(duck_idle_right)
+        self.i_left = sprite.Sprite(duck_idle_left)
         self.w_right = sprite.Sprite(self.walk_right)
         self.w_left = sprite.Sprite(self.walk_left)
         self.sprite = self.i_right
@@ -210,27 +211,31 @@ class Player:
 
 class Hud:
 
-    bread_display = sprite.Sprite(hud_bread, x=580, y=490)
+    bread_display = sprite.Sprite(hud_bread, x=580, y=490, batch=gui_batch)
 
     def __init__(self):
         self.bread_amount = 0
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
-                                            bold=True)
+                                            bold=True, batch=gui_batch)
 
     def draw(self):
         self.bread_display.draw()
         self.bread_text.draw()
 
     def update(self, dt):
-        pass
+        self.update_text()
 
     def update_text(self):
         if self.bread_amount < 10:
-            self.bread_text.x = 660
+            self.bread_text.x = self.bread_display.x + 85
         elif self.bread_amount < 100 and self.bread_amount > 9:
-            self.bread_text.x = 670
+            self.bread_text.x = self.bread_display.x + 80
+
+        self.bread_display.x = camera.offset_x + 580
+        self.bread_display.y = camera.offset_y + 490
+        self.bread_text.y = self.bread_display.y + 42
 
 
 class SceneObject:
@@ -363,8 +368,15 @@ class ParkScene(Scene):
 def on_draw():
     window.clear()
     camera.begin()
+    gui_camera.begin()
+
+    with gui_camera:
+        gui_batch.draw()
+
     game.draw()
     duck.draw()
+    game.hud.draw()
+    gui_camera.end()
     camera.end()
 
 
@@ -372,6 +384,7 @@ def on_draw():
 def update(dt):
     game.update(dt)
     duck.update(dt)
+    game.hud.update(dt)
 
 
 keys = key.KeyStateHandler()
@@ -381,6 +394,7 @@ duck = Player()
 park = ParkScene()
 game = Game(park)
 camera = Camera(scroll_speed=5)
+gui_camera = Camera(scroll_speed=5)
 
 # Objects for scenes
 boundary_up = SceneObject(id=0, solid=True, tag="boundary_up", x=0, y=600,
