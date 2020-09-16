@@ -133,8 +133,8 @@ class Player:
             img.anchor_x = img.width // 2
             img.anchor_y = img.height // 2
 
-        self.x = 400
-        self.y = 300
+        self.x = 1900
+        self.y = 200
         self.vx = 0
         self.vy = 0
         self.direction = 1
@@ -292,11 +292,55 @@ class Scene:
 class ParkScene(Scene):
 
     bg = resource.image('tile_bg.png')
+    street_north = resource.image('street_up.png')
+    street_east = resource.image('street_east.png')
+    street_south = resource.image('street_down.png')
+    street_west = resource.image('street_right.png')
 
     def __init__(self):
         self.obj_list = []
 
     def draw(self):
+
+        # Drawing street tiles
+        # North section
+        self.street_north.blit(-400, 550)
+        self.street_north.blit(0, 550)
+        self.street_north.blit(400, 550)
+        self.street_north.blit(800, 550)
+        self.street_north.blit(1200, 550)
+        self.street_north.blit(1600, 550)
+        self.street_north.blit(2000, 550)
+        self.street_north.blit(2400, 550)
+
+        # East section
+        self.street_east.blit(2400, 0)
+        self.street_east.blit(2400, 200)
+        self.street_east.blit(2400, -200)
+        self.street_east.blit(2400, -600)
+        self.street_east.blit(2400, -1000)
+        self.street_east.blit(2400, -1400)
+        self.street_east.blit(2400, -1800)
+
+        # West section
+        self.street_west.blit(-600, 200)
+        self.street_west.blit(-600, -200)
+        self.street_west.blit(-600, -600)
+        self.street_west.blit(-600, -1000)
+        self.street_west.blit(-600, -1400)
+        self.street_west.blit(-600, -1800)
+
+        # South section
+        self.street_south.blit(0, -1700)
+        self.street_south.blit(400, -1700)
+        self.street_south.blit(800, -1700)
+        self.street_south.blit(1200, -1700)
+        self.street_south.blit(1600, -1700)
+        self.street_south.blit(2000, -1700)
+
+        # =====
+
+        # Drawing grass tiles
         self.bg.blit(0, 0)
         self.bg.blit(800, 0)
         self.bg.blit(1600, 0)
