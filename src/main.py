@@ -149,7 +149,6 @@ class Player:
         self.hitbox = Region(self.x - self.sprite.width // 2,
                              self.y - self.sprite.height // 2,
                              60, 50)
-        self.bread_amount = 0
 
     def draw(self):
         self.shadow.draw()
@@ -241,7 +240,7 @@ class Hud:
     bread_display = sprite.Sprite(hud_bread, x=580, y=490, batch=gui_batch)
 
     def __init__(self):
-        self.bread_amount = duck.bread_amount
+        self.bread_amount = 0
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
@@ -503,8 +502,8 @@ class ParkScene(Scene):
             if duck.hitbox.collides(bread.hitbox) and \
                len(self.bread_objs) > 0:
                 bread.is_grabbed()
-                duck.bread_amount += 1
-                print(duck.bread_amount)
+                game.hud.bread_amount += 1
+                print(game.hud.bread_amount)
 
     def on_click(self, x, y, button):
         pass
