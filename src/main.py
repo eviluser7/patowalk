@@ -5,6 +5,7 @@ import pyglet
 from pyglet import resource
 from pyglet import sprite
 from pyglet.window import key
+from pyglet.window import mouse
 from pyglet.gl import gl
 from random import randint
 
@@ -15,7 +16,6 @@ pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 
 map_width = 2400
 map_height = 1200
-frames = 30
 
 resource.path = ['../resources', '../resources/img']
 resource.reindex()
@@ -85,6 +85,9 @@ class Game:
 
     def draw(self):
         self.scene.draw()
+
+        if self.scene == park:
+            self.hud.draw()
 
     def update(self, dt):
         window.set_mouse_cursor(default_cur)
@@ -526,12 +529,11 @@ def on_draw():
     camera.begin()
     gui_camera.begin()
 
-    with gui_camera:
+    if game.scene == park:
         gui_batch.draw()
 
     game.draw()
     duck.draw()
-    game.hud.draw()
     gui_camera.end()
     camera.end()
 
@@ -545,7 +547,13 @@ def update(dt):
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
-    print("Player: ", duck.x // 2, duck.y // 2)
+    if button & mouse.LEFT:
+        game.scene.on_click(x, y, button)
+
+
+@window.event
+def on_mouse_motion(x, y, dx, dy):
+    game.mouse_xy(x, y, dx, dy)
 
 
 # Custom timers
@@ -584,5 +592,5 @@ park.obj_list.append(boundary_left)
 park.obj_list.append(boundary_down)
 park.obj_list.append(boundary_right)
 
-pyglet.clock.schedule_interval(update, 1/frames)
+pyglet.clock.schedule_interval(update, 1/60)
 pyglet.app.run()
