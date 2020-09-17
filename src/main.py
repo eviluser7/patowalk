@@ -6,6 +6,7 @@ from pyglet import resource
 from pyglet import sprite
 from pyglet.window import key
 from pyglet.gl import gl
+from random import randint
 
 gl.glEnable(gl.GL_TEXTURE_2D)
 gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_NEAREST)
@@ -148,6 +149,7 @@ class Player:
         self.hitbox = Region(self.x - self.sprite.width // 2,
                              self.y - self.sprite.height // 2,
                              60, 50)
+        self.bread_amount = 0
 
     def draw(self):
         self.shadow.draw()
@@ -211,12 +213,35 @@ class Player:
         self.direction = direction
 
 
+class Bread:
+
+    bread_raw = resource.image('bread.png')
+
+    def __init__(self):
+        self.x = randint(125, 2297)
+        self.y = randint(-1035, 511)
+        self.sprite = sprite.Sprite(self.bread_raw, x=self.x, y=self.y)
+        self.hitbox = Region(self.sprite.x,
+                             self.sprite.y,
+                             self.sprite.width, self.sprite.height)
+
+    def draw(self):
+        self.sprite.draw()
+
+    def update(self, dt):
+        self.sprite.x = self.x
+        self.sprite.y = self.y
+
+    def is_grabbed(self):
+        park.bread_objs.remove(self)
+
+
 class Hud:
 
     bread_display = sprite.Sprite(hud_bread, x=580, y=490, batch=gui_batch)
 
     def __init__(self):
-        self.bread_amount = 0
+        self.bread_amount = duck.bread_amount
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
@@ -231,13 +256,19 @@ class Hud:
 
     def update_text(self):
         if self.bread_amount < 10:
-            self.bread_text.x = self.bread_display.x + 85
+            self.text_x = self.bread_text.x = self.bread_display.x + 85
         elif self.bread_amount < 100 and self.bread_amount > 9:
-            self.bread_text.x = self.bread_display.x + 80
+            self.text_x = self.bread_text.x = self.bread_display.x + 80
 
         self.bread_display.x = camera.offset_x + 580
         self.bread_display.y = camera.offset_y + 490
-        self.bread_text.y = self.bread_display.y + 42
+        self.text_y = self.bread_text.y = self.bread_display.y + 42
+
+        self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
+                                            x=self.text_x, y=self.text_y,
+                                            anchor_x='center',
+                                            anchor_y='center', font_size=24,
+                                            bold=True, batch=gui_batch)
 
 
 class SceneObject:
@@ -300,6 +331,8 @@ class ParkScene(Scene):
     boundary_horizontal = resource.image('boundary_horizontal.png')
 
     def __init__(self):
+        self.begin()
+        self.bread_objs = []
         self.obj_list = []
 
         self.grass_tiles = [
@@ -393,6 +426,10 @@ class ParkScene(Scene):
         for boundaries in self.boundaries:
             boundaries.draw()
 
+        # Drawing breads
+        for breads in self.bread_objs:
+            breads.draw()
+
     def update(self, dt):
 
         # Linear movement
@@ -446,6 +483,29 @@ class ParkScene(Scene):
         camera.position = (duck.x - 400,
                            duck.y - 300)
 
+        # Grab bread
+        self.detect_bread_collision()
+
+    def begin(self):
+        pyglet.clock.schedule_interval(bread_spawn, randint(2, 6))
+
+    def spawn_bread(self, dt):
+        if len(self.bread_objs) >= 0:
+            new_bread = Bread()
+            self.bread_objs.append(new_bread)
+            bread.x = randint(125, 2297)
+            bread.y = randint(-1035, 511)
+
+            print("Bread spawned at: ", bread.x, bread.y)
+
+    def detect_bread_collision(self):
+        for bread in self.bread_objs:
+            if duck.hitbox.collides(bread.hitbox) and \
+               len(self.bread_objs) > 0:
+                bread.is_grabbed()
+                duck.bread_amount += 1
+                print(duck.bread_amount)
+
     def on_click(self, x, y, button):
         pass
 
@@ -485,13 +545,18 @@ def update(dt):
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
-    print("Boundaries: ", boundary_down.x, boundary_down.y)
-    print("Player: ", duck.x, duck.y)
+    print("Player: ", duck.x // 2, duck.y // 2)
+
+
+# Custom timers
+def bread_spawn(dt):
+    park.spawn_bread(dt)
 
 
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
+bread = Bread()
 duck = Player()
 park = ParkScene()
 game = Game(park)
