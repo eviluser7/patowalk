@@ -15,6 +15,7 @@ pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 
 map_width = 2400
 map_height = 1200
+frames = 30
 
 resource.path = ['../resources', '../resources/img']
 resource.reindex()
@@ -583,5 +584,5 @@ park.obj_list.append(boundary_left)
 park.obj_list.append(boundary_down)
 park.obj_list.append(boundary_right)
 
-pyglet.clock.schedule_interval(update, 1/30)
+pyglet.clock.schedule_interval(update, 1/frames)
 pyglet.app.run()
