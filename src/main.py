@@ -28,6 +28,8 @@ duck_idle_right = resource.image('duck_idle_right.png')
 duck_idle_left = resource.image('duck_idle_left.png')
 shadow = resource.image('shadow.png')
 hud_bread = resource.image('hud_bread.png')
+button_raw = resource.image('button.png')
+title = resource.image('title.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -72,6 +74,8 @@ def center_image(img):
 center_image(duck_idle_right)
 center_image(duck_idle_left)
 center_image(shadow)
+center_image(button_raw)
+center_image(title)
 
 
 # Code structure
@@ -316,13 +320,40 @@ class Scene:
         pass
 
     def on_click(self, x, y, button):
-        print(boundary_down.x, boundary_down.y)
+        pass
 
     def on_key_press(self, symbol, modifiers):
         pass
 
 
 # Scenes
+class MenuScene(Scene):
+
+    def __init__(self):
+        self.obj_list = []
+        self.button = sprite.Sprite(button_raw, x=400, y=200)
+        self.button_r = Region(self.button.x - self.button.width // 2,
+                               self.button.y - self.button.height // 2,
+                               self.button.width, self.button.height)
+        self.title_spr = sprite.Sprite(title, x=400, y=400)
+
+    def draw(self):
+        self.button.draw()
+        self.title_spr.draw()
+
+    def update(self, dt):
+        if self.button_r.contain(game.mouse_x, game.mouse_y):
+            window.set_mouse_cursor(choose_cur)
+
+    def on_click(self, x, y, button):
+        if self.button_r.contain(x, y):
+            park.begin()
+            game.set_scene_to(park)
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+
 class ParkScene(Scene):
 
     bg = resource.image('tile_bg.png')
@@ -334,7 +365,6 @@ class ParkScene(Scene):
     boundary_horizontal = resource.image('boundary_horizontal.png')
 
     def __init__(self):
-        self.begin()
         self.bread_objs = []
         self.obj_list = []
 
@@ -499,8 +529,6 @@ class ParkScene(Scene):
             bread.x = randint(125, 2297)
             bread.y = randint(-1035, 511)
 
-            print("Bread spawned at: ", bread.x, bread.y)
-
     def detect_bread_collision(self):
         for bread in self.bread_objs:
             if duck.hitbox.collides(bread.hitbox) and \
@@ -566,8 +594,9 @@ window.push_handlers(keys)
 
 bread = Bread()
 duck = Player()
+menu = MenuScene()
 park = ParkScene()
-game = Game(park)
+game = Game(menu)
 camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
 
