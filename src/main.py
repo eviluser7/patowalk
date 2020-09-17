@@ -301,7 +301,20 @@ class ParkScene(Scene):
 
     def __init__(self):
         self.obj_list = []
-        self.v_boundaries = [
+
+        self.grass_tiles = [
+            sprite.Sprite(self.bg, x=0, y=0),
+            sprite.Sprite(self.bg, x=800, y=0),
+            sprite.Sprite(self.bg, x=1600, y=0),
+            sprite.Sprite(self.bg, x=0, y=-600),
+            sprite.Sprite(self.bg, x=0, y=-1200),
+            sprite.Sprite(self.bg, x=800, y=-600),
+            sprite.Sprite(self.bg, x=800, y=-1200),
+            sprite.Sprite(self.bg, x=1600, y=-600),
+            sprite.Sprite(self.bg, x=1600, y=-1200)
+        ]
+
+        self.boundaries = [
             sprite.Sprite(self.boundary_vertical, x=0, y=570),
             sprite.Sprite(self.boundary_vertical, x=300, y=570),
             sprite.Sprite(self.boundary_vertical, x=600, y=570),
@@ -317,10 +330,8 @@ class ParkScene(Scene):
             sprite.Sprite(self.boundary_vertical, x=1200, y=-1200),
             sprite.Sprite(self.boundary_vertical, x=1500, y=-1200),
             sprite.Sprite(self.boundary_vertical, x=1800, y=-1200),
-            sprite.Sprite(self.boundary_vertical, x=2100, y=-1200)
-        ]
+            sprite.Sprite(self.boundary_vertical, x=2100, y=-1200),
 
-        self.h_boundaries = [
             sprite.Sprite(self.boundary_horizontal, x=-10, y=360),
             sprite.Sprite(self.boundary_horizontal, x=-10, y=70),
             sprite.Sprite(self.boundary_horizontal, x=-10, y=-230),
@@ -332,66 +343,55 @@ class ParkScene(Scene):
             sprite.Sprite(self.boundary_horizontal, x=2390, y=-238),
             sprite.Sprite(self.boundary_horizontal, x=2390, y=-530),
             sprite.Sprite(self.boundary_horizontal, x=2390, y=-830),
-            sprite.Sprite(self.boundary_horizontal, x=2390, y=-1130),
+            sprite.Sprite(self.boundary_horizontal, x=2390, y=-1130)
+        ]
+
+        self.streets = [
+            sprite.Sprite(self.street_north, x=-400, y=550),
+            sprite.Sprite(self.street_north, x=0, y=550),
+            sprite.Sprite(self.street_north, x=400, y=550),
+            sprite.Sprite(self.street_north, x=800, y=550),
+            sprite.Sprite(self.street_north, x=1200, y=550),
+            sprite.Sprite(self.street_north, x=1600, y=550),
+            sprite.Sprite(self.street_north, x=2000, y=550),
+            sprite.Sprite(self.street_north, x=2400, y=550),
+
+            sprite.Sprite(self.street_east, x=2400, y=0),
+            sprite.Sprite(self.street_east, x=2400, y=200),
+            sprite.Sprite(self.street_east, x=2400, y=-200),
+            sprite.Sprite(self.street_east, x=2400, y=-600),
+            sprite.Sprite(self.street_east, x=2400, y=-1000),
+            sprite.Sprite(self.street_east, x=2400, y=-1400),
+            sprite.Sprite(self.street_east, x=2400, y=-1800),
+
+            sprite.Sprite(self.street_south, x=0, y=-1700),
+            sprite.Sprite(self.street_south, x=400, y=-1700),
+            sprite.Sprite(self.street_south, x=800, y=-1700),
+            sprite.Sprite(self.street_south, x=1200, y=-1700),
+            sprite.Sprite(self.street_south, x=1600, y=-1700),
+            sprite.Sprite(self.street_south, x=2000, y=-1700),
+
+            sprite.Sprite(self.street_west, x=-600, y=200),
+            sprite.Sprite(self.street_west, x=-600, y=-200),
+            sprite.Sprite(self.street_west, x=-600, y=-600),
+            sprite.Sprite(self.street_west, x=-600, y=-1000),
+            sprite.Sprite(self.street_west, x=-600, y=-1400),
+            sprite.Sprite(self.street_west, x=-600, y=-1800)
         ]
 
     def draw(self):
 
         # Drawing street tiles
-        # North section
-        self.street_north.blit(-400, 550)
-        self.street_north.blit(0, 550)
-        self.street_north.blit(400, 550)
-        self.street_north.blit(800, 550)
-        self.street_north.blit(1200, 550)
-        self.street_north.blit(1600, 550)
-        self.street_north.blit(2000, 550)
-        self.street_north.blit(2400, 550)
-
-        # East section
-        self.street_east.blit(2400, 0)
-        self.street_east.blit(2400, 200)
-        self.street_east.blit(2400, -200)
-        self.street_east.blit(2400, -600)
-        self.street_east.blit(2400, -1000)
-        self.street_east.blit(2400, -1400)
-        self.street_east.blit(2400, -1800)
-
-        # West section
-        self.street_west.blit(-600, 200)
-        self.street_west.blit(-600, -200)
-        self.street_west.blit(-600, -600)
-        self.street_west.blit(-600, -1000)
-        self.street_west.blit(-600, -1400)
-        self.street_west.blit(-600, -1800)
-
-        # South section
-        self.street_south.blit(0, -1700)
-        self.street_south.blit(400, -1700)
-        self.street_south.blit(800, -1700)
-        self.street_south.blit(1200, -1700)
-        self.street_south.blit(1600, -1700)
-        self.street_south.blit(2000, -1700)
-
-        # =====
+        for streets in self.streets:
+            streets.draw()
 
         # Drawing grass tiles
-        self.bg.blit(0, 0)
-        self.bg.blit(800, 0)
-        self.bg.blit(1600, 0)
-        self.bg.blit(0, -600)
-        self.bg.blit(0, -1200)
-        self.bg.blit(800, -600)
-        self.bg.blit(800, -1200)
-        self.bg.blit(1600, -600)
-        self.bg.blit(1600, -1200)
+        for grass in self.grass_tiles:
+            grass.draw()
 
         # Drawing boundaries
-        for vb in self.v_boundaries:
-            vb.draw()
-
-        for hb in self.h_boundaries:
-            hb.draw()
+        for boundaries in self.boundaries:
+            boundaries.draw()
 
     def update(self, dt):
 
