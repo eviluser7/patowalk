@@ -1,6 +1,3 @@
-from region import Region
-from camera import Camera
-
 import pyglet
 from pyglet import resource
 from pyglet import sprite
@@ -32,6 +29,54 @@ button_raw = resource.image('button.png')
 title = resource.image('title.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
+
+
+class Camera:
+
+    def __init__(self, scroll_speed=1, min_zoom=1, max_zoom=4):
+        assert min_zoom <= max_zoom
+        self.scroll_speed = scroll_speed
+        self.max_zoom = max_zoom
+        self.min_zoom = min_zoom
+        self.offset_x = 0
+        self.offset_y = 0
+        self._zoom = max(min(1, self.max_zoom), self.min_zoom)
+
+    @property
+    def zoom(self):
+        return self._zoom
+
+    @zoom.setter
+    def zoom(self, value):
+        self._zoom = max(min(value, self.max_zoom), self.min_zoom)
+
+    @property
+    def position(self):
+        return self.offset_x, self.offset_y
+
+    @position.setter
+    def position(self, value):
+        self.offset_x, self.offset_y = value
+
+    def move(self, axis_x, axis_y):
+        self.offset_x += self.scroll_speed * axis_x
+        self.offset_y += self.scroll_speed * axis_y
+
+    def begin(self):
+        gl.glTranslatef(-self.offset_x * self._zoom,
+                        -self.offset_y * self._zoom, 0)
+        gl.glScalef(self._zoom, self._zoom, 1)
+
+    def end(self):
+        gl.glScalef(1 / self._zoom, 1 / self._zoom, 1)
+        gl.glTranslatef(self.offset_x * self._zoom,
+                        self.offset_y * self._zoom, 0)
+
+    def __enter__(self):
+        self.begin()
+
+    def __exit__(self, exception_type, exception_value, traceback):
+        self.end()
 
 
 def position_camera(self, camera: Camera, position: tuple = (0, 0),
@@ -76,6 +121,65 @@ center_image(duck_idle_left)
 center_image(shadow)
 center_image(button_raw)
 center_image(title)
+
+
+# Utils
+
+class Rect:
+
+    def __init__(self, x, y, w, h):
+        self.set(x, y, w, h)
+
+    def draw(self):
+        pyglet.graphics.draw(4, gl.GL_QUADS, self._quad)
+
+    def set(self, x=None, y=None, w=None, h=None):
+        self._x = self._x if x is None else x
+        self._y = self._y if y is None else y
+        self._w = self._w if w is None else w
+        self._h = self._h if h is None else h
+        self._quad = ('v2f', (self._x, self._y,
+                              self._x + self._w, self._y,
+                              self._x + self._w, self._y + self._h,
+                              self._x, self._y + self._h))
+
+
+class Region:
+
+    def __init__(self, x, y, w, h):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+
+    def contain(self, x, y):
+        inside_x = False
+        inside_y = False
+
+        if x >= self.x and x <= (self.x + self.w):
+            inside_x = True
+
+        if y >= self.y and y <= (self.y + self.h):
+            inside_y = True
+
+        if inside_x and inside_y:
+            return True
+        else:
+            return False
+
+    def collides(self, r2):
+        # Check the edge collision
+        if self.x < r2.x + r2.w and \
+           self.x + self.w > r2.x and \
+           self.y < r2.y + r2.h and \
+           self.h + self.y > r2.y:
+            return True
+
+        return False
+
+    def draw(self):
+        r = Rect(self.x, self.y, self.w, self.h)
+        r.draw()
 
 
 # Code structure
