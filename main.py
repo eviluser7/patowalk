@@ -720,7 +720,7 @@ class ParkScene(Scene):
             self.timed_out = False
 
     def begin(self):
-        pyglet.clock.schedule_interval(bread_spawn, randint(1, 3))
+        pyglet.clock.schedule_interval(bread_spawn, 2)
         pyglet.clock.schedule_interval(timer, 1)
 
     def end_game(self):
