@@ -497,8 +497,6 @@ class MenuScene(Scene):
             duck.y = 300
             game.hud.bread_amount = 0
             game.hud.timer = 5
-            print(f"Target: {park.target_amount}")
-            print(f"Current bread: {game.hud.bread_amount}")
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -619,6 +617,7 @@ class ParkScene(Scene):
         self.has_game_finished = False
         self.duck_won = False
         self.target_amount = 0
+        self.timed_out = False
 
     def draw(self):
 
@@ -702,15 +701,10 @@ class ParkScene(Scene):
         self.detect_bread_collision()
 
         # Finish game
-        if game.hud.timer <= 0 and \
-           game.hud.bread_amount < self.target_amount:
+        if game.hud.timer <= 0:
             self.end_game()
             self.duck_won = False
-
-        if game.hud.timer <= 0 and \
-           game.hud.bread_amount >= self.target_amount:
-            self.end_game()
-            self.duck_won = True
+            self.timed_out = True
 
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, randint(2, 6))
@@ -791,7 +785,8 @@ class FinishScreen(Scene):
 
     def update(self, dt):
         camera.position = (0, 0)
-        if park.duck_won or game.hud.bread_amount >= park.target_amount:
+        if park.duck_won or game.hud.bread_amount >= park.target_amount and \
+           not park.timed_out:
             self.text = self.won_text
         else:
             self.text = self.lose_text
