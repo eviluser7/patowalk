@@ -27,6 +27,7 @@ shadow = resource.image('shadow.png')
 hud_bread = resource.image('hud_bread.png')
 button_raw = resource.image('button.png')
 title = resource.image('title.png')
+water = resource.image('water.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -121,6 +122,7 @@ center_image(duck_idle_left)
 center_image(shadow)
 center_image(button_raw)
 center_image(title)
+center_image(water)
 
 
 # Utils
@@ -549,6 +551,15 @@ class ParkScene(Scene):
             sprite.Sprite(self.street_west, x=-600, y=-1800)
         ]
 
+        self.water_ponds = [
+            sprite.Sprite(water, x=400, y=400),
+            sprite.Sprite(water, x=1200, y=200),
+            sprite.Sprite(water, x=800, y=-100),
+            sprite.Sprite(water, x=1700, y=-300),
+            sprite.Sprite(water, x=500, y=-700),
+            sprite.Sprite(water, x=800, y=-1700),
+        ]
+
     def draw(self):
 
         # Drawing street tiles
@@ -566,6 +577,10 @@ class ParkScene(Scene):
         # Drawing breads
         for breads in self.bread_objs:
             breads.draw()
+
+        # Drawing water
+        for water in self.water_ponds:
+            water.draw()
 
     def update(self, dt):
 
@@ -718,12 +733,36 @@ boundary_right = SceneObject(id=3, solid=True, tag="boundary_right",
                              x=map_width, y=-300, w=1, h=1800,
                              visible=False)
 
+water_1 = SceneObject(id=4, solid=True, tag="water_1",
+                      x=400, y=400, w=175, h=57, visible=False)
+
+water_2 = SceneObject(id=5, solid=True, tag="water_2", x=1200, y=200,
+                      w=175, h=57, visible=False)
+
+water_3 = SceneObject(id=6, solid=True, tag="water_3", x=800, y=-100,
+                      w=175, h=57, visible=False)
+
+water_4 = SceneObject(id=7, solid=True, tag="water_4", x=1700, y=-300,
+                      w=175, h=57, visible=False)
+
+water_5 = SceneObject(id=8, solid=True, tag="water_5", x=500, y=-700,
+                      w=175, h=57, visible=False)
+
+water_6 = SceneObject(id=9, solid=True, tag="water_6", x=800, y=-1700,
+                      w=175, h=57, visible=False)
+
 
 # Appending those objects to the scenes
 park.obj_list.append(boundary_up)
 park.obj_list.append(boundary_left)
 park.obj_list.append(boundary_down)
 park.obj_list.append(boundary_right)
+park.obj_list.append(water_1)
+park.obj_list.append(water_2)
+park.obj_list.append(water_3)
+park.obj_list.append(water_4)
+park.obj_list.append(water_5)
+park.obj_list.append(water_6)
 
 pyglet.clock.schedule_interval(update, 1/60)
 pyglet.app.run()
