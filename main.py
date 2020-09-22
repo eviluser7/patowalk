@@ -493,10 +493,10 @@ class MenuScene(Scene):
         if self.button_r.contain(x, y):
             park.begin()
             game.set_scene_to(park)
-            duck.x = 400
-            duck.y = 300
+            duck.x = 1570
+            duck.y = 500
             game.hud.bread_amount = 0
-            game.hud.timer = 5
+            game.hud.timer = 100
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -511,6 +511,7 @@ class ParkScene(Scene):
     street_west = resource.image('street_right.png')
     boundary_vertical = resource.image('boundary_vertical.png')
     boundary_horizontal = resource.image('boundary_horizontal.png')
+    sign = resource.image('sign.png')
 
     def __init__(self):
         self.bread_objs = []
@@ -534,7 +535,6 @@ class ParkScene(Scene):
             sprite.Sprite(self.boundary_vertical, x=600, y=570),
             sprite.Sprite(self.boundary_vertical, x=900, y=570),
             sprite.Sprite(self.boundary_vertical, x=1200, y=570),
-            sprite.Sprite(self.boundary_vertical, x=1500, y=570),
             sprite.Sprite(self.boundary_vertical, x=1800, y=570),
             sprite.Sprite(self.boundary_vertical, x=2100, y=570),
             sprite.Sprite(self.boundary_vertical, x=0, y=-1200),
@@ -545,6 +545,9 @@ class ParkScene(Scene):
             sprite.Sprite(self.boundary_vertical, x=1500, y=-1200),
             sprite.Sprite(self.boundary_vertical, x=1800, y=-1200),
             sprite.Sprite(self.boundary_vertical, x=2100, y=-1200),
+
+            # Sign
+            sprite.Sprite(self.sign, x=1650, y=470),
 
             sprite.Sprite(self.boundary_horizontal, x=-10, y=360),
             sprite.Sprite(self.boundary_horizontal, x=-10, y=70),
@@ -614,10 +617,14 @@ class ParkScene(Scene):
             sprite.Sprite(flower, x=1600, y=-1200),
         ]
 
+        self.exit_region = Region(1450, 580, 360, 100)
+
         self.has_game_finished = False
         self.duck_won = False
-        self.target_amount = 0
+        self.target_amount = randint(10, 56)
         self.timed_out = False
+        self.target_text = pyglet.text.Label(f"{self.target_amount}",
+                                             x=1670, y=510, bold=True)
 
     def draw(self):
 
@@ -643,6 +650,8 @@ class ParkScene(Scene):
         # Drawing water
         for water in self.water_ponds:
             water.draw()
+
+        self.target_text.draw()
 
     def update(self, dt):
 
