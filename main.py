@@ -33,6 +33,7 @@ flower = resource.image('flower.png')
 win_text = resource.image('win_text.png')
 lose_text = resource.image('lose_text.png')
 quack = resource.media('quack.wav', streaming=False)
+eat_bread = resource.media('eat_bread.wav', streaming=False)
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -364,6 +365,7 @@ class Bread:
 
     def is_grabbed(self):
         park.bread_objs.remove(self)
+        eat_bread.play()
 
 
 class Hud:
