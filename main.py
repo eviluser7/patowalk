@@ -230,6 +230,7 @@ class Game:
         self.hud.timer = 100
         self.set_scene_to(park)
         park.begin()
+        park.update_bread_count()
 
 
 class Player:
@@ -495,6 +496,7 @@ class MenuScene(Scene):
             duck.y = 500
             game.hud.bread_amount = 0
             game.hud.timer = 100
+            park.update_bread_count()
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -623,6 +625,7 @@ class ParkScene(Scene):
         self.timed_out = False
         self.target_text = pyglet.text.Label(f"{self.target_amount}",
                                              x=1670, y=510, bold=True)
+        self.update_bread_count()
 
     def draw(self):
 
@@ -719,6 +722,11 @@ class ParkScene(Scene):
             self.duck_won = True
             self.timed_out = False
 
+    def update_bread_count(self):
+        self.target_amount = randint(10, 46)
+        self.target_text = pyglet.text.Label(f"{self.target_amount}",
+                                             x=1670, y=510, bold=True)
+
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, 2)
         pyglet.clock.schedule_interval(timer, 1)
@@ -755,7 +763,8 @@ class ParkScene(Scene):
         pass
 
     def on_key_press(self, symbol, modifiers):
-        pass
+        if symbol == key.R:
+            self.target_amount = randint(10, 46)
 
     def is_key_pressed(self):
         for _, v in keys.items():
