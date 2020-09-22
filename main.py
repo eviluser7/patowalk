@@ -30,6 +30,8 @@ button_raw = resource.image('button.png')
 title = resource.image('title.png')
 water = resource.image('water.png')
 flower = resource.image('flower.png')
+win_text = resource.image('win_text.png')
+lose_text = resource.image('lose_text.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -125,6 +127,8 @@ center_image(shadow)
 center_image(button_raw)
 center_image(title)
 center_image(water)
+center_image(win_text)
+center_image(lose_text)
 
 
 # Utils
@@ -212,8 +216,19 @@ class Game:
     def on_click(self, x, y, button):
         self.scene.on_click(x, y, button)
 
+    def on_key_press(self, symbol, modifiers):
+        self.scene.on_key_press(symbol, modifiers)
+
     def set_scene_to(self, scene):
         self.scene = scene
+
+    def restart(self):
+        duck.x = 400
+        duck.y = 300
+        self.hud.bread_amount = 0
+        self.hud.timer = 100
+        self.set_scene_to(park)
+        park.begin()
 
 
 class Player:
@@ -362,7 +377,7 @@ class Hud:
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
                                             bold=True, batch=gui_batch)
-        self.timer = 100
+        self.timer = 1
         self.timer_text = pyglet.text.Label(f"{self.timer}", x=660,
                                             y=450, anchor_x='center',
                                             anchor_y='center', font_size=24,
@@ -595,6 +610,10 @@ class ParkScene(Scene):
             sprite.Sprite(flower, x=1600, y=-1200),
         ]
 
+        self.has_game_finished = False
+        self.duck_won = False
+        self.target_amount = 0
+
     def draw(self):
 
         # Drawing street tiles
@@ -676,9 +695,33 @@ class ParkScene(Scene):
         # Grab bread
         self.detect_bread_collision()
 
+        # Finish game
+        if game.hud.timer <= 0 and \
+           game.hud.bread_amount < self.target_amount:
+            self.end_game()
+            self.duck_won = False
+
+        if game.hud.timer <= 0 and \
+           game.hud.bread_amount >= self.target_amount:
+            self.end_game()
+            self.duck_won = True
+
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, randint(2, 6))
         pyglet.clock.schedule_interval(timer, 1)
+
+    def end_game(self):
+        pyglet.clock.unschedule(bread_spawn)
+        pyglet.clock.unschedule(timer)
+        game.hud.timer = 100
+        game.hud.bread_amount = 0
+        self.has_game_finished = True
+
+        if len(self.bread_objs) > 0:
+            for bread in self.bread_objs:
+                self.bread_objs.remove(bread)
+
+        game.set_scene_to(game_results)
 
     def spawn_bread(self, dt):
         if len(self.bread_objs) >= 0:
@@ -712,17 +755,47 @@ class ParkScene(Scene):
         return False
 
 
+class FinishScreen(Scene):
+
+    def __init__(self):
+        self.obj_list = []
+        self.won_text = sprite.Sprite(win_text, x=400, y=300)
+        self.lose_text = sprite.Sprite(lose_text, x=400, y=300)
+
+    def draw(self):
+        if park.duck_won:
+            self.won_text.draw()
+        else:
+            self.lose_text.draw()
+
+    def update(self, dt):
+        camera.position = (0, 0)
+
+    def on_click(self, x, y, button):
+        pass
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.R:
+            game.restart()
+
+    def is_key_pressed(self):
+        for _, v in keys.items():
+            if v:
+                return True
+
+        return False
+
+
 @window.event
 def on_draw():
     window.clear()
     camera.begin()
     gui_camera.begin()
+    game.draw()
 
     if game.scene == park:
-        gui_batch.draw()
+        duck.draw()
 
-    game.draw()
-    duck.draw()
     gui_camera.end()
     camera.end()
 
@@ -745,6 +818,11 @@ def on_mouse_motion(x, y, dx, dy):
     game.mouse_xy(x, y, dx, dy)
 
 
+@window.event
+def on_key_press(symbol, modifiers):
+    game.on_key_press(symbol, modifiers)
+
+
 # Custom timers
 def bread_spawn(dt):
     park.spawn_bread(dt)
@@ -761,6 +839,7 @@ bread = Bread()
 duck = Player()
 menu = MenuScene()
 park = ParkScene()
+game_results = FinishScreen()
 game = Game(menu)
 camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
