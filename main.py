@@ -366,13 +366,9 @@ class Hud:
         self.update_text()
 
     def update_text(self):
-        if self.bread_amount < 10:
-            self.text_x = self.bread_text.x = self.bread_display.x + 85
-        elif self.bread_amount < 100 and self.bread_amount > 9:
-            self.text_x = self.bread_text.x = self.bread_display.x + 80
-
         self.bread_display.x = camera.offset_x + 580
         self.bread_display.y = camera.offset_y + 490
+        self.text_x = self.bread_text.x = self.bread_display.x + 80
         self.text_y = self.bread_text.y = self.bread_display.y + 42
 
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
