@@ -226,7 +226,7 @@ class Game:
         duck.x = 400
         duck.y = 300
         self.hud.bread_amount = 0
-        self.hud.timer = 100
+        self.hud.timer = 5
         self.set_scene_to(park)
         park.begin()
 
@@ -493,6 +493,12 @@ class MenuScene(Scene):
         if self.button_r.contain(x, y):
             park.begin()
             game.set_scene_to(park)
+            duck.x = 400
+            duck.y = 300
+            game.hud.bread_amount = 0
+            game.hud.timer = 5
+            print(f"Target: {park.target_amount}")
+            print(f"Current bread: {game.hud.bread_amount}")
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -713,8 +719,6 @@ class ParkScene(Scene):
     def end_game(self):
         pyglet.clock.unschedule(bread_spawn)
         pyglet.clock.unschedule(timer)
-        game.hud.timer = 100
-        game.hud.bread_amount = 0
         self.has_game_finished = True
 
         if len(self.bread_objs) > 0:
@@ -762,14 +766,35 @@ class FinishScreen(Scene):
         self.won_text = sprite.Sprite(win_text, x=400, y=300)
         self.lose_text = sprite.Sprite(lose_text, x=400, y=300)
 
-    def draw(self):
+        self.restart = pyglet.text.Label("Press 'R' to restart", x=400, y=200,
+                                         anchor_x='center', anchor_y='center',
+                                         bold=True, font_size=24,
+                                         color=(255, 255, 255, 255))
+
+        self.leave = pyglet.text.Label("Press 'L' to return to the menu",
+                                       x=400, y=150,
+                                       anchor_x='center', anchor_y='center',
+                                       bold=True, font_size=24,
+                                       color=(255, 255, 255, 255))
+
+        self.text = None
+
         if park.duck_won:
-            self.won_text.draw()
+            self.text = self.won_text
         else:
-            self.lose_text.draw()
+            self.text = self.lose_text
+
+    def draw(self):
+        self.text.draw()
+        self.restart.draw()
+        self.leave.draw()
 
     def update(self, dt):
         camera.position = (0, 0)
+        if park.duck_won or game.hud.bread_amount >= park.target_amount:
+            self.text = self.won_text
+        else:
+            self.text = self.lose_text
 
     def on_click(self, x, y, button):
         pass
@@ -777,6 +802,9 @@ class FinishScreen(Scene):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.R:
             game.restart()
+
+        if symbol == key.L:
+            game.set_scene_to(menu)
 
     def is_key_pressed(self):
         for _, v in keys.items():
