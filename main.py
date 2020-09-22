@@ -25,6 +25,7 @@ duck_idle_right = resource.image('duck_idle_right.png')
 duck_idle_left = resource.image('duck_idle_left.png')
 shadow = resource.image('shadow.png')
 hud_bread = resource.image('hud_bread.png')
+timer_hud = resource.image('timer_hud.png')
 button_raw = resource.image('button.png')
 title = resource.image('title.png')
 water = resource.image('water.png')
@@ -353,6 +354,7 @@ class Bread:
 class Hud:
 
     bread_display = sprite.Sprite(hud_bread, x=580, y=490, batch=gui_batch)
+    time_display = sprite.Sprite(timer_hud, x=580, y=400, batch=gui_batch)
 
     def __init__(self):
         self.bread_amount = 0
@@ -360,10 +362,17 @@ class Hud:
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
                                             bold=True, batch=gui_batch)
+        self.timer = 100
+        self.timer_text = pyglet.text.Label(f"{self.timer}", x=660,
+                                            y=450, anchor_x='center',
+                                            anchor_y='center', font_size=24,
+                                            bold=True, batch=gui_batch)
 
     def draw(self):
         self.bread_display.draw()
+        self.time_display.draw()
         self.bread_text.draw()
+        self.timer_text.draw()
 
     def update(self, dt):
         self.update_text()
@@ -371,11 +380,24 @@ class Hud:
     def update_text(self):
         self.bread_display.x = camera.offset_x + 580
         self.bread_display.y = camera.offset_y + 490
-        self.text_x = self.bread_text.x = self.bread_display.x + 80
-        self.text_y = self.bread_text.y = self.bread_display.y + 42
+        self.bread_text_x = self.bread_text.x = self.bread_display.x + 80
+        self.bread_text_y = self.bread_text.y = self.bread_display.y + 42
 
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
-                                            x=self.text_x, y=self.text_y,
+                                            x=self.bread_text_x,
+                                            y=self.bread_text_y,
+                                            anchor_x='center',
+                                            anchor_y='center', font_size=24,
+                                            bold=True, batch=gui_batch)
+
+        self.time_display.x = camera.offset_x + 580
+        self.time_display.y = camera.offset_y + 400
+        self.time_text_x = self.timer_text.x = self.time_display.x + 80
+        self.time_text_y = self.timer_text.y = self.time_display.y + 42
+
+        self.timer_text = pyglet.text.Label(f"{self.timer}",
+                                            x=self.time_text_x,
+                                            y=self.time_text_y,
                                             anchor_x='center',
                                             anchor_y='center', font_size=24,
                                             bold=True, batch=gui_batch)
@@ -656,6 +678,7 @@ class ParkScene(Scene):
 
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, randint(2, 6))
+        pyglet.clock.schedule_interval(timer, 1)
 
     def spawn_bread(self, dt):
         if len(self.bread_objs) >= 0:
@@ -671,6 +694,9 @@ class ParkScene(Scene):
                 bread.is_grabbed()
                 game.hud.bread_amount += 1
                 print(game.hud.bread_amount)
+
+    def decrease_timer(self, dt):
+        game.hud.timer -= 1
 
     def on_click(self, x, y, button):
         pass
@@ -722,6 +748,10 @@ def on_mouse_motion(x, y, dx, dy):
 # Custom timers
 def bread_spawn(dt):
     park.spawn_bread(dt)
+
+
+def timer(dt):
+    park.decrease_timer(dt)
 
 
 keys = key.KeyStateHandler()
