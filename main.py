@@ -713,6 +713,12 @@ class ParkScene(Scene):
             self.duck_won = False
             self.timed_out = True
 
+        if duck.hitbox.collides(self.exit_region) and \
+           game.hud.bread_amount >= self.target_amount:
+            self.end_game()
+            self.duck_won = True
+            self.timed_out = False
+
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, randint(1, 3))
         pyglet.clock.schedule_interval(timer, 1)
