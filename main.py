@@ -28,6 +28,7 @@ hud_bread = resource.image('hud_bread.png')
 button_raw = resource.image('button.png')
 title = resource.image('title.png')
 water = resource.image('water.png')
+flower = resource.image('flower.png')
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -560,6 +561,18 @@ class ParkScene(Scene):
             sprite.Sprite(water, x=800, y=-1700),
         ]
 
+        self.flowers = [
+            sprite.Sprite(flower, x=0, y=0),
+            sprite.Sprite(flower, x=800, y=0),
+            sprite.Sprite(flower, x=1600, y=0),
+            sprite.Sprite(flower, x=0, y=-600),
+            sprite.Sprite(flower, x=0, y=-1200),
+            sprite.Sprite(flower, x=800, y=-600),
+            sprite.Sprite(flower, x=800, y=-1200),
+            sprite.Sprite(flower, x=1600, y=-600),
+            sprite.Sprite(flower, x=1600, y=-1200),
+        ]
+
     def draw(self):
 
         # Drawing street tiles
@@ -569,6 +582,9 @@ class ParkScene(Scene):
         # Drawing grass tiles
         for grass in self.grass_tiles:
             grass.draw()
+
+        for flower in self.flowers:
+            flower.draw()
 
         # Drawing boundaries
         for boundaries in self.boundaries:
