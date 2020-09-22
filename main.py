@@ -14,7 +14,7 @@ pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 map_width = 2400
 map_height = 1200
 
-resource.path = ['../resources', '../resources/img']
+resource.path = ['./resources', './resources/img']
 resource.reindex()
 
 window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
@@ -433,6 +433,8 @@ class Scene:
 # Scenes
 class MenuScene(Scene):
 
+    background = resource.image('bg.png')
+
     def __init__(self):
         self.obj_list = []
         self.button = sprite.Sprite(button_raw, x=400, y=200)
@@ -440,8 +442,10 @@ class MenuScene(Scene):
                                self.button.y - self.button.height // 2,
                                self.button.width, self.button.height)
         self.title_spr = sprite.Sprite(title, x=400, y=400)
+        self.bg = sprite.Sprite(self.background, x=0, y=0)
 
     def draw(self):
+        self.bg.draw()
         self.button.draw()
         self.title_spr.draw()
 
