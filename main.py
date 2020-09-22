@@ -223,10 +223,11 @@ class Game:
         self.scene = scene
 
     def restart(self):
-        duck.x = 400
-        duck.y = 300
+        park.target_amount = randint(10, 46)
+        duck.x = 1570
+        duck.y = 500
         self.hud.bread_amount = 0
-        self.hud.timer = 5
+        self.hud.timer = 100
         self.set_scene_to(park)
         park.begin()
 
@@ -308,9 +309,6 @@ class Player:
                 self.sprite.x = self.x
                 self.sprite.y = self.y
                 return
-
-            if obj_hit == boundary_down:
-                print(boundary_down.x, boundary_down.y)
 
         # Check sprite
         if not self.moving and \
@@ -621,7 +619,7 @@ class ParkScene(Scene):
 
         self.has_game_finished = False
         self.duck_won = False
-        self.target_amount = randint(10, 56)
+        self.target_amount = randint(10, 46)
         self.timed_out = False
         self.target_text = pyglet.text.Label(f"{self.target_amount}",
                                              x=1670, y=510, bold=True)
@@ -716,7 +714,7 @@ class ParkScene(Scene):
             self.timed_out = True
 
     def begin(self):
-        pyglet.clock.schedule_interval(bread_spawn, randint(2, 6))
+        pyglet.clock.schedule_interval(bread_spawn, randint(1, 3))
         pyglet.clock.schedule_interval(timer, 1)
 
     def end_game(self):
@@ -743,7 +741,6 @@ class ParkScene(Scene):
                len(self.bread_objs) > 0:
                 bread.is_grabbed()
                 game.hud.bread_amount += 1
-                print(game.hud.bread_amount)
 
     def decrease_timer(self, dt):
         game.hud.timer -= 1
