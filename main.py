@@ -14,7 +14,7 @@ pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 map_width = 2400
 map_height = 1200
 
-resource.path = ['./resources', './resources/img']
+resource.path = ['./resources', './resources/img', './resources/sfx']
 resource.reindex()
 
 window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
@@ -32,6 +32,7 @@ water = resource.image('water.png')
 flower = resource.image('flower.png')
 win_text = resource.image('win_text.png')
 lose_text = resource.image('lose_text.png')
+quack = resource.media('quack.wav', streaming=False)
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -478,6 +479,8 @@ class MenuScene(Scene):
                                self.button.width, self.button.height)
         self.title_spr = sprite.Sprite(title, x=400, y=400)
         self.bg = sprite.Sprite(self.background, x=0, y=0)
+
+        quack.play()
 
     def draw(self):
         self.bg.draw()
