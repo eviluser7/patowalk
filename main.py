@@ -34,6 +34,8 @@ win_text = resource.image('win_text.png')
 lose_text = resource.image('lose_text.png')
 quack = resource.media('quack.wav', streaming=False)
 eat_bread = resource.media('eat_bread.wav', streaming=False)
+victory = resource.media('victory.wav', streaming=False)
+game_over = resource.media('gameover.wav', streaming=False)
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -374,7 +376,7 @@ class Hud:
     time_display = sprite.Sprite(timer_hud, x=580, y=400, batch=gui_batch)
 
     def __init__(self):
-        self.bread_amount = 0
+        self.bread_amount = 50
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
@@ -499,7 +501,7 @@ class MenuScene(Scene):
             game.set_scene_to(park)
             duck.x = 1570
             duck.y = 500
-            game.hud.bread_amount = 0
+            game.hud.bread_amount = 50
             game.hud.timer = 100
             park.update_bread_count()
 
@@ -720,12 +722,15 @@ class ParkScene(Scene):
             self.end_game()
             self.duck_won = False
             self.timed_out = True
+            game.set_scene_to(lose_results)
 
         if duck.hitbox.collides(self.exit_region) and \
            game.hud.bread_amount >= self.target_amount:
+            print(self.duck_won)
             self.end_game()
             self.duck_won = True
             self.timed_out = False
+            game.set_scene_to(win_results)
 
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
@@ -744,8 +749,6 @@ class ParkScene(Scene):
         if len(self.bread_objs) > 0:
             for bread in self.bread_objs:
                 self.bread_objs.remove(bread)
-
-        game.set_scene_to(game_results)
 
     def spawn_bread(self, dt):
         if len(self.bread_objs) >= 0:
@@ -779,11 +782,15 @@ class ParkScene(Scene):
         return False
 
 
-class FinishScreen(Scene):
+class WinScreen(Scene):
 
     def __init__(self):
+
+        if game.scene == self:
+            victory.play()
+
         self.obj_list = []
-        self.won_text = sprite.Sprite(win_text, x=400, y=300)
+        self.text = sprite.Sprite(win_text, x=400, y=300)
         self.lose_text = sprite.Sprite(lose_text, x=400, y=300)
 
         self.restart = pyglet.text.Label("Press 'R' to restart", x=400, y=200,
@@ -797,25 +804,60 @@ class FinishScreen(Scene):
                                        bold=True, font_size=24,
                                        color=(255, 255, 255, 255))
 
-        self.text = None
-
         if park.duck_won:
-            self.text = self.won_text
-        else:
-            self.text = self.lose_text
+            victory.play()
+        elif not park.duck_won and game.scene in [self]:
+            game_over.play()
 
     def draw(self):
         self.text.draw()
-        self.restart.draw()
-        self.leave.draw()
 
     def update(self, dt):
         camera.position = (0, 0)
-        if park.duck_won or game.hud.bread_amount >= park.target_amount and \
-           not park.timed_out:
-            self.text = self.won_text
-        else:
-            self.text = self.lose_text
+
+    def on_click(self, x, y, button):
+        pass
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.R:
+            game.restart()
+
+        if symbol == key.L:
+            game.set_scene_to(menu)
+
+    def is_key_pressed(self):
+        for _, v in keys.items():
+            if v:
+                return True
+
+        return False
+
+
+class LoseScreen(Scene):
+
+    def __init__(self):
+        if game.scene == self:
+            game_over.play()
+
+        self.obj_list = []
+        self.text = sprite.Sprite(lose_text, x=400, y=300)
+
+        self.restart = pyglet.text.Label("Press 'R' to restart", x=400, y=200,
+                                         anchor_x='center', anchor_y='center',
+                                         bold=True, font_size=24,
+                                         color=(255, 255, 255, 255))
+
+        self.leave = pyglet.text.Label("Press 'L' to return to the menu",
+                                       x=400, y=150,
+                                       anchor_x='center', anchor_y='center',
+                                       bold=True, font_size=24,
+                                       color=(255, 255, 255, 255))
+
+    def draw(self):
+        self.text.draw()
+
+    def update(self, dt):
+        camera.position = (0, 0)
 
     def on_click(self, x, y, button):
         pass
@@ -888,8 +930,9 @@ bread = Bread()
 duck = Player()
 menu = MenuScene()
 park = ParkScene()
-game_results = FinishScreen()
 game = Game(menu)
+win_results = WinScreen()
+lose_results = LoseScreen()
 camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
 
