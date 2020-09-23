@@ -379,7 +379,7 @@ class Hud:
     time_display = sprite.Sprite(timer_hud, x=580, y=400, batch=gui_batch)
 
     def __init__(self):
-        self.bread_amount = 50
+        self.bread_amount = 0
         self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
                                             y=533, anchor_x='center',
                                             anchor_y='center', font_size=24,
@@ -523,7 +523,7 @@ class MenuScene(Scene):
             game.set_scene_to(park)
             duck.x = 1570
             duck.y = 500
-            game.hud.bread_amount = 50
+            game.hud.bread_amount = 0
             game.hud.timer = 100
             park.update_bread_count()
 
