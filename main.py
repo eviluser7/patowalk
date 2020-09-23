@@ -39,6 +39,12 @@ quack = resource.media('quack.wav', streaming=False)
 eat_bread = resource.media('eat_bread.wav', streaming=False)
 victory = resource.media('victory.wav', streaming=False)
 game_over = resource.media('gameover.wav', streaming=False)
+ambience = resource.media('ambience.wav', streaming=False)
+
+amb = pyglet.media.Player()
+amb.queue(ambience)
+amb.loop = True
+
 default_cur = window.get_system_mouse_cursor(window.CURSOR_DEFAULT)
 choose_cur = window.get_system_mouse_cursor(window.CURSOR_HAND)
 
@@ -238,6 +244,7 @@ class Game:
         self.set_scene_to(park)
         park.begin()
         park.update_bread_count()
+        amb.play()
 
 
 class Player:
@@ -526,6 +533,7 @@ class MenuScene(Scene):
             game.hud.bread_amount = 0
             game.hud.timer = 100
             park.update_bread_count()
+            amb.play()
 
         if self.info_region.contain(x, y):
             game.set_scene_to(licenses)
@@ -545,6 +553,7 @@ class Licenses(Scene):
     instructions = sprite.Sprite(gameplay, x=0, y=0)
 
     def __init__(self):
+        amb.pause()
         self.bg = sprite.Sprite(self.license_bg, x=0, y=0)
         self.obj_list = []
         self.page = 1
@@ -909,6 +918,7 @@ class ParkScene(Scene):
 class WinScreen(Scene):
 
     def __init__(self):
+        amb.pause()
         victory.play()
         self.obj_list = []
         self.text = sprite.Sprite(win_text, x=400, y=300)
@@ -954,6 +964,7 @@ class WinScreen(Scene):
 class LoseScreen(Scene):
 
     def __init__(self):
+        amb.pause()
         game_over.play()
         self.obj_list = []
         self.text = sprite.Sprite(lose_text, x=400, y=300)
