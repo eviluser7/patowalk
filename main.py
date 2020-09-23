@@ -16,6 +16,7 @@ map_height = 1200
 
 resource.path = ['./resources', './resources/img', './resources/sfx']
 resource.reindex()
+pyglet.options['debug_gl'] = False
 
 window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
 
