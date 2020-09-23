@@ -489,6 +489,16 @@ class MenuScene(Scene):
         self.bg = sprite.Sprite(self.background, x=0, y=0)
         self.info_button = sprite.Sprite(self.info, x=700, y=50)
         self.info_region = Region(700, 50, 64, 64)
+        self.author = pyglet.text.Label("Made by eviluser7 in 2020",
+                                        x=640, y=15, anchor_x='center',
+                                        anchor_y='center', font_size=16,
+                                        color=(0, 0, 0, 255),
+                                        bold=True)
+        self.version = pyglet.text.Label("v1.0", x=570, y=326,
+                                         anchor_x='center', anchor_y='center',
+                                         font_size=24,
+                                         color=(255, 255, 255, 255),
+                                         bold=True)
 
         quack.play()
 
@@ -497,6 +507,8 @@ class MenuScene(Scene):
         self.button.draw()
         self.title_spr.draw()
         self.info_button.draw()
+        self.author.draw()
+        self.version.draw()
 
     def update(self, dt):
         if self.button_r.contain(game.mouse_x, game.mouse_y):
