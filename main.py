@@ -722,6 +722,7 @@ class ParkScene(Scene):
             self.end_game()
             self.duck_won = False
             self.timed_out = True
+            lose_results = LoseScreen()
             game.set_scene_to(lose_results)
 
         if duck.hitbox.collides(self.exit_region) and \
@@ -730,6 +731,7 @@ class ParkScene(Scene):
             self.end_game()
             self.duck_won = True
             self.timed_out = False
+            win_results = WinScreen()
             game.set_scene_to(win_results)
 
     def update_bread_count(self):
@@ -785,10 +787,7 @@ class ParkScene(Scene):
 class WinScreen(Scene):
 
     def __init__(self):
-
-        if game.scene == self:
-            victory.play()
-
+        victory.play()
         self.obj_list = []
         self.text = sprite.Sprite(win_text, x=400, y=300)
         self.lose_text = sprite.Sprite(lose_text, x=400, y=300)
@@ -804,13 +803,10 @@ class WinScreen(Scene):
                                        bold=True, font_size=24,
                                        color=(255, 255, 255, 255))
 
-        if park.duck_won:
-            victory.play()
-        elif not park.duck_won and game.scene in [self]:
-            game_over.play()
-
     def draw(self):
         self.text.draw()
+        self.restart.draw()
+        self.leave.draw()
 
     def update(self, dt):
         camera.position = (0, 0)
@@ -836,9 +832,7 @@ class WinScreen(Scene):
 class LoseScreen(Scene):
 
     def __init__(self):
-        if game.scene == self:
-            game_over.play()
-
+        game_over.play()
         self.obj_list = []
         self.text = sprite.Sprite(lose_text, x=400, y=300)
 
@@ -855,6 +849,8 @@ class LoseScreen(Scene):
 
     def draw(self):
         self.text.draw()
+        self.restart.draw()
+        self.leave.draw()
 
     def update(self, dt):
         camera.position = (0, 0)
@@ -931,8 +927,6 @@ duck = Player()
 menu = MenuScene()
 park = ParkScene()
 game = Game(menu)
-win_results = WinScreen()
-lose_results = LoseScreen()
 camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
 
