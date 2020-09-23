@@ -32,6 +32,8 @@ water = resource.image('water.png')
 flower = resource.image('flower.png')
 win_text = resource.image('win_text.png')
 lose_text = resource.image('lose_text.png')
+page_left = resource.image('pageL.png')
+page_right = resource.image('pageR.png')
 quack = resource.media('quack.wav', streaming=False)
 eat_bread = resource.media('eat_bread.wav', streaming=False)
 victory = resource.media('victory.wav', streaming=False)
@@ -474,6 +476,7 @@ class Scene:
 class MenuScene(Scene):
 
     background = resource.image('bg.png')
+    info = resource.image('info.png')
 
     def __init__(self):
         self.obj_list = []
@@ -483,6 +486,8 @@ class MenuScene(Scene):
                                self.button.width, self.button.height)
         self.title_spr = sprite.Sprite(title, x=400, y=400)
         self.bg = sprite.Sprite(self.background, x=0, y=0)
+        self.info_button = sprite.Sprite(self.info, x=700, y=50)
+        self.info_region = Region(700, 50, 64, 64)
 
         quack.play()
 
@@ -490,9 +495,13 @@ class MenuScene(Scene):
         self.bg.draw()
         self.button.draw()
         self.title_spr.draw()
+        self.info_button.draw()
 
     def update(self, dt):
         if self.button_r.contain(game.mouse_x, game.mouse_y):
+            window.set_mouse_cursor(choose_cur)
+
+        if self.info_region.contain(game.mouse_x, game.mouse_y):
             window.set_mouse_cursor(choose_cur)
 
     def on_click(self, x, y, button):
@@ -504,6 +513,106 @@ class MenuScene(Scene):
             game.hud.bread_amount = 50
             game.hud.timer = 100
             park.update_bread_count()
+
+        if self.info_region.contain(x, y):
+            game.set_scene_to(licenses)
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
+
+class Licenses(Scene):
+
+    license_bg = resource.image('license_bg.png')
+    credits_back = resource.image('credits_back.png')
+    gameplay = resource.image('gameplay.png')
+    pageL = sprite.Sprite(page_left, x=350, y=5)
+    pageR = sprite.Sprite(page_right, x=420, y=5)
+    back_spr = sprite.Sprite(credits_back, x=10, y=500)
+    instructions = sprite.Sprite(gameplay, x=0, y=0)
+
+    def __init__(self):
+        self.bg = sprite.Sprite(self.license_bg, x=0, y=0)
+        self.obj_list = []
+        self.page = 1
+        self.back = Region(10, 500, 135, 86)
+        self.go_right = Region(420, 5, 64, 64)
+        self.go_left = Region(350, 5, 64, 64)
+        self.license = pyglet.text.Label(
+            """
+            Copyright (c) 2006-2008 Alex Holkner
+    Copyright (c) 2008-2020 pyglet contributors
+    All rights reserved.
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions are met:
+        * Redistributions of source code must retain the above copyright
+            notice, this list of conditions and the following disclaimer.
+        * Redistributions in binary form must reproduce the above copyright
+            notice, this list of conditions and the following disclaimer in
+            the documentation and/or other materials provided with the
+            distribution.
+        * Neither the name of pyglet nor the names of its
+            contributors may be used to endorse or promote products
+            derived from this software without specific prior written
+            permission.
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+            """,
+            x=550, y=230, anchor_x='center', anchor_y='center', font_size=10,
+            bold=True, color=(0, 0, 0, 255),
+            multiline=True, width=800, height=600
+        )
+
+        self.license_header = pyglet.text.Label("License", x=400, y=550,
+                                                anchor_x='center',
+                                                anchor_y='center',
+                                                font_size=24, bold=True,
+                                                color=(0, 0, 0, 255))
+
+    def draw(self):
+        self.bg.draw()
+        if self.page == 1:
+            self.license.draw()
+            self.license_header.draw()
+            self.pageR.draw()
+
+        if self.page == 2:
+            self.instructions.draw()
+            self.pageL.draw()
+
+        self.back_spr.draw()
+
+    def update(self, dt):
+        if self.go_right.contain(game.mouse_x, game.mouse_y) and \
+           self.page == 1:
+            window.set_mouse_cursor(choose_cur)
+
+        if self.go_left.contain(game.mouse_x, game.mouse_y) and \
+           self.page == 2:
+            window.set_mouse_cursor(choose_cur)
+
+        if self.back.contain(game.mouse_x, game.mouse_y):
+            window.set_mouse_cursor(choose_cur)
+
+    def on_click(self, x, y, button):
+        if self.go_right.contain(x, y) and self.page == 1:
+            self.page = 2
+
+        if self.go_left.contain(x, y) and self.page == 2:
+            self.page = 1
+
+        if self.back.contain(x, y):
+            game.set_scene_to(menu)
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -925,6 +1034,7 @@ window.push_handlers(keys)
 bread = Bread()
 duck = Player()
 menu = MenuScene()
+licenses = Licenses()
 park = ParkScene()
 game = Game(menu)
 camera = Camera(scroll_speed=5)
