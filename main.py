@@ -416,12 +416,24 @@ class Hud:
         self.bread_text_x = self.bread_text.x = self.bread_display.x + 80
         self.bread_text_y = self.bread_text.y = self.bread_display.y + 42
 
-        self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
-                                            x=self.bread_text_x,
-                                            y=self.bread_text_y,
-                                            anchor_x='center',
-                                            anchor_y='center', font_size=24,
-                                            bold=True, batch=gui_batch)
+        if self.bread_amount != park.target_amount:
+            self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
+                                                x=self.bread_text_x,
+                                                y=self.bread_text_y,
+                                                anchor_x='center',
+                                                anchor_y='center',
+                                                font_size=24,
+                                                color=(255, 255, 255, 255),
+                                                bold=True, batch=gui_batch)
+        if self.bread_amount >= park.target_amount:
+            self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
+                                                x=self.bread_text_x,
+                                                y=self.bread_text_y,
+                                                anchor_x='center',
+                                                anchor_y='center',
+                                                font_size=24,
+                                                color=(155, 227, 103, 255),
+                                                bold=True, batch=gui_batch)
 
         self.time_display.x = camera.offset_x + 580
         self.time_display.y = camera.offset_y + 400
@@ -505,7 +517,7 @@ class MenuScene(Scene):
                                         anchor_y='center', font_size=16,
                                         color=(0, 0, 0, 255),
                                         bold=True)
-        self.version = pyglet.text.Label("v1.0", x=570, y=326,
+        self.version = pyglet.text.Label("v1.01", x=577, y=326,
                                          anchor_x='center', anchor_y='center',
                                          font_size=24,
                                          color=(255, 255, 255, 255),
