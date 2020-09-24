@@ -20,6 +20,10 @@ pyglet.options['debug_gl'] = False
 
 window = pyglet.window.Window(800, 600, caption="Pato Goes For a Walk")
 
+icon16 = resource.image('icon16.png')
+icon32 = resource.image('icon32.png')
+window.set_icon(icon16, icon32)
+
 gui_batch = pyglet.graphics.Batch()
 
 duck_idle_right = resource.image('duck_idle_right.png')
