@@ -13,3 +13,4 @@ git clone https://github.com/eviluser7/patowalk.git
 cd patowalk
 python main.py
 ```
+Licensed under the Apache-2.0 License.
