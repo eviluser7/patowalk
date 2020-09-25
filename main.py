@@ -276,6 +276,17 @@ class Player:
                                                             duration=0.1,
                                                             loop=True)
 
+    air = resource.image('air.png')
+    witch_hat = resource.image('witch_hat.png')
+    top_hat = resource.image('top_hat.png')
+    builder_hat = resource.image('builder_hat.png')
+    bread_hat = resource.image('bread_hat.png')
+    birthday_hat = resource.image('birthday_hat.png')
+    among_hat = resource.image('among_hat.png')
+    rainbow_hat = resource.image('rainbow_hat.png')
+    jimmy_hat = resource.image('jimmy_hat.png')
+    plant_hat = resource.image('plant_hat.png')
+
     def __init__(self):
         for img in self.walk_left_frames:
             img.anchor_x = img.width // 2
@@ -301,9 +312,24 @@ class Player:
                              self.y - self.sprite.height // 2,
                              60, 50)
 
+        # Hats
+        self.hat_0 = sprite.Sprite(self.air)
+        self.hat_1 = sprite.Sprite(self.witch_hat)
+        self.hat_2 = sprite.Sprite(self.top_hat)
+        self.hat_3 = sprite.Sprite(self.builder_hat)
+        self.hat_4 = sprite.Sprite(self.bread_hat)
+        self.hat_5 = sprite.Sprite(self.birthday_hat)
+        self.hat_6 = sprite.Sprite(self.among_hat)
+        self.hat_7 = sprite.Sprite(self.rainbow_hat)
+        self.hat_8 = sprite.Sprite(self.jimmy_hat)
+        self.hat_9 = sprite.Sprite(self.plant_hat)
+
+        self.hat_wear = self.hat_9
+
     def draw(self):
         self.shadow.draw()
         self.sprite.draw()
+        self.hat_wear.draw()
 
     def detect_collision(self, hitbox):
         for obj in game.scene.obj_list:
@@ -353,6 +379,9 @@ class Player:
         self.shadow.x = self.x - 5 if self.direction == 1 else self.x + 5
         self.shadow.y = self.y - 45
         self.hitbox = new_hitbox
+        self.hat_wear.x = self.x - 30 if self.direction == 0 else self.x - 20
+        self.hat_wear.y = self.y + 20 if self.hat_wear in [self.hat_5] else \
+            self.y + 15
 
     def change_direction(self, vx, vy, direction):
         self.vx = vx
