@@ -557,6 +557,31 @@ class Scene:
 
 
 # Scenes
+class Introduction(Scene):
+
+    logo = resource.image('logo.png')
+    center_image(logo)
+
+    def __init__(self):
+        self.obj_list = []
+        self.count = 0
+        self.text = pyglet.text.Label("eviluser7 presents...", x=400, y=200,
+                                      anchor_x='center', anchor_y='center',
+                                      bold=True, color=(255, 255, 255, 255))
+
+    def draw(self):
+        self.logo.blit(400, 300)
+        self.text.draw()
+
+    def update(self, dt):
+        self.count += 1
+        if self.count >= 120:
+            game.set_next_scene(menu)
+
+    def on_click(self, x, y, button):
+        pass
+
+
 class MenuScene(Scene):
 
     background = resource.image('bg.png')
@@ -585,8 +610,6 @@ class MenuScene(Scene):
                                          font_size=24,
                                          color=(255, 255, 255, 255),
                                          bold=True)
-
-        quack.play()
 
     def draw(self):
         self.bg.draw()
@@ -622,6 +645,9 @@ class MenuScene(Scene):
 
     def on_key_press(self, symbol, modifiers):
         pass
+
+    def enter(self):
+        quack.play()
 
 
 class Licenses(Scene):
@@ -1241,11 +1267,12 @@ window.push_handlers(keys)
 
 bread = Bread()
 duck = Player()
+intro = Introduction()
 menu = MenuScene()
 licenses = Licenses()
 hats = HatSelection()
 park = ParkScene()
-game = Game(menu)
+game = Game(intro)
 camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
 
