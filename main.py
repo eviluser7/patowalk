@@ -26,6 +26,7 @@ window.set_icon(icon16, icon32)
 
 gui_batch = pyglet.graphics.Batch()
 
+dark = resource.image('black.png')
 duck_idle_right = resource.image('duck_idle_right.png')
 duck_idle_left = resource.image('duck_idle_left.png')
 shadow = resource.image('shadow.png')
@@ -44,6 +45,7 @@ eat_bread = resource.media('eat_bread.wav', streaming=False)
 victory = resource.media('victory.wav', streaming=False)
 game_over = resource.media('gameover.wav', streaming=False)
 ambience = resource.media('ambience.wav', streaming=False)
+black = sprite.Sprite(dark, x=0, y=0)
 
 amb = pyglet.media.Player()
 amb.queue(ambience)
@@ -215,6 +217,9 @@ class Game:
         self.mouse_x = 0
         self.mouse_y = 0
         self.hud = Hud()
+        self.on_exit = False
+        self.opacity = 0
+        self.next_scene = scene
 
     def draw(self):
         self.scene.draw()
@@ -222,9 +227,17 @@ class Game:
         if self.scene == park:
             self.hud.draw()
 
+        if self.on_exit:
+            self.opacity += 20
+            black.opacity = min(self.opacity, 255)
+            black.draw()
+
     def update(self, dt):
         window.set_mouse_cursor(default_cur)
         self.scene.update(dt)
+
+        if self.opacity >= 255:
+            self.enter()
 
     def mouse_xy(self, x, y, dx, dy):
         self.mouse_x = x
@@ -237,7 +250,17 @@ class Game:
         self.scene.on_key_press(symbol, modifiers)
 
     def set_scene_to(self, scene):
-        self.scene = scene
+        self.scene = self.next_scene
+
+    def set_next_scene(self, next_scene):
+        pyglet.clock.schedule_once(self.set_scene_to, 0.2)
+        self.next_scene = next_scene
+        self.on_exit = True
+
+    def enter(self):
+        self.scene.enter()
+        self.opacity = 0
+        self.on_exit = False
 
     def restart(self):
         park.target_amount = randint(10, 46)
@@ -245,7 +268,7 @@ class Game:
         duck.y = 500
         self.hud.bread_amount = 0
         self.hud.timer = 100
-        self.set_scene_to(park)
+        self.set_next_scene(park)
         park.begin()
         park.update_bread_count()
         amb.play()
@@ -529,6 +552,9 @@ class Scene:
     def on_key_press(self, symbol, modifiers):
         pass
 
+    def enter(self):
+        pass
+
 
 # Scenes
 class MenuScene(Scene):
@@ -580,7 +606,7 @@ class MenuScene(Scene):
     def on_click(self, x, y, button):
         if self.button_r.contain(x, y):
             park.begin()
-            game.set_scene_to(park)
+            game.set_next_scene(park)
             duck.x = 1570
             duck.y = 500
             game.hud.bread_amount = 0
@@ -589,10 +615,10 @@ class MenuScene(Scene):
             amb.play()
 
         if self.info_region.contain(x, y):
-            game.set_scene_to(licenses)
+            game.set_next_scene(licenses)
 
         if self.hat_region.contain(x, y):
-            game.set_scene_to(hats)
+            game.set_next_scene(hats)
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -690,7 +716,7 @@ class Licenses(Scene):
             self.page = 1
 
         if self.back.contain(x, y):
-            game.set_scene_to(menu)
+            game.set_next_scene(menu)
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -765,7 +791,7 @@ class HatSelection(Scene):
 
     def on_click(self, x, y, button):
         if self.back.contain(x, y):
-            game.set_scene_to(menu)
+            game.set_next_scene(menu)
 
         if self.hat_selectors[0].contain(x, y):
             duck.hat_wear = duck.hat_1
@@ -1012,7 +1038,7 @@ class ParkScene(Scene):
             self.duck_won = False
             self.timed_out = True
             lose_results = LoseScreen()
-            game.set_scene_to(lose_results)
+            game.set_next_scene(lose_results)
 
         if duck.hitbox.collides(self.exit_region) and \
            game.hud.bread_amount >= self.target_amount:
@@ -1021,7 +1047,7 @@ class ParkScene(Scene):
             self.duck_won = True
             self.timed_out = False
             win_results = WinScreen()
-            game.set_scene_to(win_results)
+            game.set_next_scene(win_results)
 
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
@@ -1109,7 +1135,7 @@ class WinScreen(Scene):
             game.restart()
 
         if symbol == key.L:
-            game.set_scene_to(menu)
+            game.set_next_scene(menu)
 
     def is_key_pressed(self):
         for _, v in keys.items():
@@ -1154,7 +1180,7 @@ class LoseScreen(Scene):
             game.restart()
 
         if symbol == key.L:
-            game.set_scene_to(menu)
+            game.set_next_scene(menu)
 
     def is_key_pressed(self):
         for _, v in keys.items():
