@@ -324,7 +324,7 @@ class Player:
         self.hat_8 = sprite.Sprite(self.jimmy_hat)
         self.hat_9 = sprite.Sprite(self.plant_hat)
 
-        self.hat_wear = self.hat_9
+        self.hat_wear = self.hat_0
 
     def draw(self):
         self.shadow.draw()
@@ -379,9 +379,14 @@ class Player:
         self.shadow.x = self.x - 5 if self.direction == 1 else self.x + 5
         self.shadow.y = self.y - 45
         self.hitbox = new_hitbox
-        self.hat_wear.x = self.x - 30 if self.direction == 0 else self.x - 20
-        self.hat_wear.y = self.y + 20 if self.hat_wear in [self.hat_5] else \
-            self.y + 15
+
+        if game.scene == park:
+            self.hat_wear.x = self.x - 30 if self.direction == 0 else \
+             self.x - 20
+            self.hat_wear.y = self.y + 20 if self.hat_wear in \
+                [self.hat_5] else self.y + 15
+            self.hat_wear.scale = 1
+            self.sprite.scale = 1
 
     def change_direction(self, vx, vy, direction):
         self.vx = vx
@@ -530,6 +535,7 @@ class MenuScene(Scene):
 
     background = resource.image('bg.png')
     info = resource.image('info.png')
+    hat_button = resource.image('hat_button.png')
 
     def __init__(self):
         self.obj_list = []
@@ -540,7 +546,9 @@ class MenuScene(Scene):
         self.title_spr = sprite.Sprite(title, x=400, y=400)
         self.bg = sprite.Sprite(self.background, x=0, y=0)
         self.info_button = sprite.Sprite(self.info, x=700, y=50)
+        self.hat_click = sprite.Sprite(self.hat_button, x=700, y=120)
         self.info_region = Region(700, 50, 64, 64)
+        self.hat_region = Region(700, 120, 64, 64)
         self.author = pyglet.text.Label("Made by eviluser7 in 2020",
                                         x=640, y=15, anchor_x='center',
                                         anchor_y='center', font_size=16,
@@ -559,14 +567,14 @@ class MenuScene(Scene):
         self.button.draw()
         self.title_spr.draw()
         self.info_button.draw()
+        self.hat_click.draw()
         self.author.draw()
         self.version.draw()
 
     def update(self, dt):
-        if self.button_r.contain(game.mouse_x, game.mouse_y):
-            window.set_mouse_cursor(choose_cur)
-
-        if self.info_region.contain(game.mouse_x, game.mouse_y):
+        if self.button_r.contain(game.mouse_x, game.mouse_y) or \
+           self.info_region.contain(game.mouse_x, game.mouse_y) or \
+           self.hat_region.contain(game.mouse_x, game.mouse_y):
             window.set_mouse_cursor(choose_cur)
 
     def on_click(self, x, y, button):
@@ -582,6 +590,9 @@ class MenuScene(Scene):
 
         if self.info_region.contain(x, y):
             game.set_scene_to(licenses)
+
+        if self.hat_region.contain(x, y):
+            game.set_scene_to(hats)
 
     def on_key_press(self, symbol, modifiers):
         pass
@@ -683,6 +694,108 @@ class Licenses(Scene):
 
     def on_key_press(self, symbol, modifiers):
         pass
+
+
+class HatSelection(Scene):
+
+    hat0_select = resource.image('hat0_select.png')
+    hat1_select = resource.image('hat1_select.png')
+    hat2_select = resource.image('hat2_select.png')
+    hat3_select = resource.image('hat3_select.png')
+    hat4_select = resource.image('hat4_select.png')
+    hat5_select = resource.image('hat5_select.png')
+    hat6_select = resource.image('hat6_select.png')
+    hat7_select = resource.image('hat7_select.png')
+    hat8_select = resource.image('hat8_select.png')
+    hat9_select = resource.image('hat9_select.png')
+
+    def __init__(self):
+        self.obj_list = []
+        self.back = Region(10, 500, 135, 86)
+        duck.x = 160
+        duck.y = 200
+
+        self.hat_icons = [
+            sprite.Sprite(self.hat1_select, x=420, y=400),
+            sprite.Sprite(self.hat2_select, x=550, y=400),
+            sprite.Sprite(self.hat3_select, x=670, y=400),
+            sprite.Sprite(self.hat4_select, x=420, y=280),
+            sprite.Sprite(self.hat5_select, x=550, y=280),
+            sprite.Sprite(self.hat6_select, x=670, y=280),
+            sprite.Sprite(self.hat7_select, x=420, y=160),
+            sprite.Sprite(self.hat8_select, x=550, y=160),
+            sprite.Sprite(self.hat9_select, x=670, y=160),
+            sprite.Sprite(self.hat0_select, x=550, y=40)
+        ]
+
+        self.hat_selectors = [
+            Region(420, 400, 100, 100),
+            Region(550, 400, 100, 100),
+            Region(670, 400, 100, 100),
+            Region(420, 280, 100, 100),
+            Region(550, 280, 100, 100),
+            Region(670, 280, 100, 100),
+            Region(420, 160, 100, 100),
+            Region(550, 160, 100, 100),
+            Region(670, 160, 100, 100),
+            Region(550, 40, 100, 100)
+        ]
+
+    def draw(self):
+        licenses.bg.draw()
+        licenses.back_spr.draw()
+        duck.sprite.draw()
+        duck.hat_wear.draw()
+
+        for hats in self.hat_icons:
+            hats.draw()
+
+    def update(self, dt):
+        if self.back.contain(game.mouse_x, game.mouse_y):
+            window.set_mouse_cursor(choose_cur)
+
+        for selectors in self.hat_selectors:
+            if selectors.contain(game.mouse_x, game.mouse_y):
+                window.set_mouse_cursor(choose_cur)
+
+        duck.hat_wear.x = duck.x - 60
+        duck.hat_wear.y = duck.y + 35
+        duck.sprite.scale = 2.8
+        duck.hat_wear.scale = 2.8
+
+    def on_click(self, x, y, button):
+        if self.back.contain(x, y):
+            game.set_scene_to(menu)
+
+        if self.hat_selectors[0].contain(x, y):
+            duck.hat_wear = duck.hat_1
+
+        if self.hat_selectors[1].contain(x, y):
+            duck.hat_wear = duck.hat_2
+
+        if self.hat_selectors[2].contain(x, y):
+            duck.hat_wear = duck.hat_3
+
+        if self.hat_selectors[3].contain(x, y):
+            duck.hat_wear = duck.hat_4
+
+        if self.hat_selectors[4].contain(x, y):
+            duck.hat_wear = duck.hat_5
+
+        if self.hat_selectors[5].contain(x, y):
+            duck.hat_wear = duck.hat_6
+
+        if self.hat_selectors[6].contain(x, y):
+            duck.hat_wear = duck.hat_7
+
+        if self.hat_selectors[7].contain(x, y):
+            duck.hat_wear = duck.hat_8
+
+        if self.hat_selectors[8].contain(x, y):
+            duck.hat_wear = duck.hat_9
+
+        if self.hat_selectors[9].contain(x, y):
+            duck.hat_wear = duck.hat_0
 
 
 class ParkScene(Scene):
@@ -1104,6 +1217,7 @@ bread = Bread()
 duck = Player()
 menu = MenuScene()
 licenses = Licenses()
+hats = HatSelection()
 park = ParkScene()
 game = Game(menu)
 camera = Camera(scroll_speed=5)
