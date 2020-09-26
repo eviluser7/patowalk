@@ -677,12 +677,17 @@ class MenuScene(Scene):
         self.hat_click.draw()
         self.author.draw()
         self.version.draw()
+        duck.hat_wear.draw()
 
     def update(self, dt):
         if self.button_r.contain(game.mouse_x, game.mouse_y) or \
            self.info_region.contain(game.mouse_x, game.mouse_y) or \
            self.hat_region.contain(game.mouse_x, game.mouse_y):
             window.set_mouse_cursor(choose_cur)
+
+        duck.hat_wear.x = 650
+        duck.hat_wear.y = 125
+        duck.hat_wear.scale = 1
 
     def on_click(self, x, y, button):
         if self.button_r.contain(x, y):
