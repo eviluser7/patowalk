@@ -695,7 +695,7 @@ class MenuScene(Scene):
             game.set_next_scene(park)
             duck.x = 1570
             duck.y = 500
-            game.hud.bread_amount = 0
+            game.hud.bread_amount = 50
             game.hud.timer = 100
             park.update_bread_count()
             amb.play()
@@ -1155,12 +1155,12 @@ class ParkScene(Scene):
 
         if duck.hitbox.collides(self.exit_region) and \
            game.hud.bread_amount >= self.target_amount:
-            print(self.duck_won)
             self.end_game()
             self.duck_won = True
             self.timed_out = False
             win_results = WinScreen()
             game.set_next_scene(win_results)
+            win_results.play_sound()
 
         if gs.state_exists():
             gs.load(duck)
@@ -1219,7 +1219,6 @@ class WinScreen(Scene):
 
     def __init__(self):
         amb.pause()
-        victory.play()
         self.obj_list = []
         self.text = sprite.Sprite(win_text, x=400, y=300)
         self.lose_text = sprite.Sprite(lose_text, x=400, y=300)
@@ -1259,6 +1258,11 @@ class WinScreen(Scene):
                 return True
 
         return False
+
+    def play_sound(self):
+        self.audio_player = pyglet.media.Player()
+        self.audio_player.queue(victory)
+        self.audio_player.play()
 
 
 class LoseScreen(Scene):
