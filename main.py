@@ -793,11 +793,18 @@ class HatSelection(Scene):
             Region(550, 40, 100, 100)
         ]
 
+        self.warning = pyglet.text.Label("Warning: hats here are not shown accurately",
+                                         x=200, y=400, anchor_x='center',
+                                         anchor_y='center',
+                                         color=(255, 255, 255, 255),
+                                         bold=True, font_size=10)
+
     def draw(self):
         licenses.bg.draw()
         licenses.back_spr.draw()
         duck.sprite.draw()
         duck.hat_wear.draw()
+        self.warning.draw()
 
         for hats in self.hat_icons:
             hats.draw()
