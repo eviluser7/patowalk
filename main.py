@@ -1,6 +1,7 @@
 import pyglet
 from pyglet import resource
 from pyglet import sprite
+from pyglet import text
 from pyglet.window import key
 from pyglet.window import mouse
 from pyglet.gl import gl
@@ -448,15 +449,15 @@ class Hud:
 
     def __init__(self):
         self.bread_amount = 0
-        self.bread_text = pyglet.text.Label(f"{self.bread_amount}", x=660,
-                                            y=533, anchor_x='center',
-                                            anchor_y='center', font_size=24,
-                                            bold=True, batch=gui_batch)
+        self.bread_text = text.Label(f"{self.bread_amount}", x=660,
+                                     y=533, anchor_x='center',
+                                     anchor_y='center', font_size=24,
+                                     bold=True, batch=gui_batch)
         self.timer = 1
-        self.timer_text = pyglet.text.Label(f"{self.timer}", x=660,
-                                            y=450, anchor_x='center',
-                                            anchor_y='center', font_size=24,
-                                            bold=True, batch=gui_batch)
+        self.timer_text = text.Label(f"{self.timer}", x=660,
+                                     y=450, anchor_x='center',
+                                     anchor_y='center', font_size=24,
+                                     bold=True, batch=gui_batch)
 
     def draw(self):
         self.bread_display.draw()
@@ -474,35 +475,35 @@ class Hud:
         self.bread_text_y = self.bread_text.y = self.bread_display.y + 42
 
         if self.bread_amount != park.target_amount:
-            self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
-                                                x=self.bread_text_x,
-                                                y=self.bread_text_y,
-                                                anchor_x='center',
-                                                anchor_y='center',
-                                                font_size=24,
-                                                color=(255, 255, 255, 255),
-                                                bold=True, batch=gui_batch)
+            self.bread_text = text.Label(f"{self.bread_amount}",
+                                         x=self.bread_text_x,
+                                         y=self.bread_text_y,
+                                         anchor_x='center',
+                                         anchor_y='center',
+                                         font_size=24,
+                                         color=(255, 255, 255, 255),
+                                         bold=True, batch=gui_batch)
         if self.bread_amount >= park.target_amount:
-            self.bread_text = pyglet.text.Label(f"{self.bread_amount}",
-                                                x=self.bread_text_x,
-                                                y=self.bread_text_y,
-                                                anchor_x='center',
-                                                anchor_y='center',
-                                                font_size=24,
-                                                color=(155, 227, 103, 255),
-                                                bold=True, batch=gui_batch)
+            self.bread_text = text.Label(f"{self.bread_amount}",
+                                         x=self.bread_text_x,
+                                         y=self.bread_text_y,
+                                         anchor_x='center',
+                                         anchor_y='center',
+                                         font_size=24,
+                                         color=(155, 227, 103, 255),
+                                         bold=True, batch=gui_batch)
 
         self.time_display.x = camera.offset_x + 580
         self.time_display.y = camera.offset_y + 400
         self.time_text_x = self.timer_text.x = self.time_display.x + 80
         self.time_text_y = self.timer_text.y = self.time_display.y + 42
 
-        self.timer_text = pyglet.text.Label(f"{self.timer}",
-                                            x=self.time_text_x,
-                                            y=self.time_text_y,
-                                            anchor_x='center',
-                                            anchor_y='center', font_size=24,
-                                            bold=True, batch=gui_batch)
+        self.timer_text = text.Label(f"{self.timer}",
+                                     x=self.time_text_x,
+                                     y=self.time_text_y,
+                                     anchor_x='center',
+                                     anchor_y='center', font_size=24,
+                                     bold=True, batch=gui_batch)
 
 
 class SceneObject:
@@ -565,9 +566,9 @@ class Introduction(Scene):
     def __init__(self):
         self.obj_list = []
         self.count = 0
-        self.text = pyglet.text.Label("eviluser7 presents...", x=400, y=200,
-                                      anchor_x='center', anchor_y='center',
-                                      bold=True, color=(255, 255, 255, 255))
+        self.text = text.Label("eviluser7 presents...", x=400, y=200,
+                               anchor_x='center', anchor_y='center',
+                               bold=True, color=(255, 255, 255, 255))
 
     def draw(self):
         self.logo.blit(400, 300)
@@ -600,16 +601,16 @@ class MenuScene(Scene):
         self.hat_click = sprite.Sprite(self.hat_button, x=700, y=120)
         self.info_region = Region(700, 50, 64, 64)
         self.hat_region = Region(700, 120, 64, 64)
-        self.author = pyglet.text.Label("Made by eviluser7 in 2020",
-                                        x=640, y=15, anchor_x='center',
-                                        anchor_y='center', font_size=16,
-                                        color=(0, 0, 0, 255),
-                                        bold=True)
-        self.version = pyglet.text.Label("v1.01", x=577, y=326,
-                                         anchor_x='center', anchor_y='center',
-                                         font_size=24,
-                                         color=(255, 255, 255, 255),
-                                         bold=True)
+        self.author = text.Label("Made by eviluser7 in 2020",
+                                 x=640, y=15, anchor_x='center',
+                                 anchor_y='center', font_size=16,
+                                 color=(0, 0, 0, 255),
+                                 bold=True)
+        self.version = text.Label("v1.01", x=577, y=326,
+                                  anchor_x='center', anchor_y='center',
+                                  font_size=24,
+                                  color=(255, 255, 255, 255),
+                                  bold=True)
 
     def draw(self):
         self.bg.draw()
@@ -668,7 +669,7 @@ class Licenses(Scene):
         self.back = Region(10, 500, 135, 86)
         self.go_right = Region(420, 5, 64, 64)
         self.go_left = Region(350, 5, 64, 64)
-        self.license = pyglet.text.Label(
+        self.license = text.Label(
             """
             Copyright (c) 2006-2008 Alex Holkner
     Copyright (c) 2008-2020 pyglet contributors
@@ -703,11 +704,11 @@ class Licenses(Scene):
             multiline=True, width=800, height=600
         )
 
-        self.license_header = pyglet.text.Label("License", x=400, y=550,
-                                                anchor_x='center',
-                                                anchor_y='center',
-                                                font_size=24, bold=True,
-                                                color=(0, 0, 0, 255))
+        self.license_header = text.Label("License", x=400, y=550,
+                                         anchor_x='center',
+                                         anchor_y='center',
+                                         font_size=24, bold=True,
+                                         color=(0, 0, 0, 255))
 
     def draw(self):
         self.bg.draw()
@@ -793,18 +794,18 @@ class HatSelection(Scene):
             Region(550, 40, 100, 100)
         ]
 
-        self.warning = pyglet.text.Label("Warning: hats here are not shown accurately",
-                                         x=200, y=400, anchor_x='center',
-                                         anchor_y='center',
-                                         color=(255, 255, 255, 255),
-                                         bold=True, font_size=10)
+        self.warn = text.Label("Warning: hats here are not shown accurately",
+                               x=200, y=400, anchor_x='center',
+                               anchor_y='center',
+                               color=(255, 255, 255, 255),
+                               bold=True, font_size=10)
 
     def draw(self):
         licenses.bg.draw()
         licenses.back_spr.draw()
         duck.sprite.draw()
         duck.hat_wear.draw()
-        self.warning.draw()
+        self.warn.draw()
 
         for hats in self.hat_icons:
             hats.draw()
@@ -978,8 +979,8 @@ class ParkScene(Scene):
         self.duck_won = False
         self.target_amount = randint(10, 46)
         self.timed_out = False
-        self.target_text = pyglet.text.Label(f"{self.target_amount}",
-                                             x=1670, y=510, bold=True)
+        self.target_text = text.Label(f"{self.target_amount}",
+                                      x=1670, y=510, bold=True)
         self.update_bread_count()
 
     def draw(self):
@@ -1084,8 +1085,8 @@ class ParkScene(Scene):
 
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
-        self.target_text = pyglet.text.Label(f"{self.target_amount}",
-                                             x=1670, y=510, bold=True)
+        self.target_text = text.Label(f"{self.target_amount}",
+                                      x=1670, y=510, bold=True)
 
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, 2)
@@ -1141,16 +1142,16 @@ class WinScreen(Scene):
         self.text = sprite.Sprite(win_text, x=400, y=300)
         self.lose_text = sprite.Sprite(lose_text, x=400, y=300)
 
-        self.restart = pyglet.text.Label("Press 'R' to restart", x=400, y=200,
-                                         anchor_x='center', anchor_y='center',
-                                         bold=True, font_size=24,
-                                         color=(255, 255, 255, 255))
+        self.restart = text.Label("Press 'R' to restart", x=400, y=200,
+                                  anchor_x='center', anchor_y='center',
+                                  bold=True, font_size=24,
+                                  color=(255, 255, 255, 255))
 
-        self.leave = pyglet.text.Label("Press 'L' to return to the menu",
-                                       x=400, y=150,
-                                       anchor_x='center', anchor_y='center',
-                                       bold=True, font_size=24,
-                                       color=(255, 255, 255, 255))
+        self.leave = text.Label("Press 'L' to return to the menu",
+                                x=400, y=150,
+                                anchor_x='center', anchor_y='center',
+                                bold=True, font_size=24,
+                                color=(255, 255, 255, 255))
 
     def draw(self):
         self.text.draw()
@@ -1186,16 +1187,16 @@ class LoseScreen(Scene):
         self.obj_list = []
         self.text = sprite.Sprite(lose_text, x=400, y=300)
 
-        self.restart = pyglet.text.Label("Press 'R' to restart", x=400, y=200,
-                                         anchor_x='center', anchor_y='center',
-                                         bold=True, font_size=24,
-                                         color=(255, 255, 255, 255))
+        self.restart = text.Label("Press 'R' to restart", x=400, y=200,
+                                  anchor_x='center', anchor_y='center',
+                                  bold=True, font_size=24,
+                                  color=(255, 255, 255, 255))
 
-        self.leave = pyglet.text.Label("Press 'L' to return to the menu",
-                                       x=400, y=150,
-                                       anchor_x='center', anchor_y='center',
-                                       bold=True, font_size=24,
-                                       color=(255, 255, 255, 255))
+        self.leave = text.Label("Press 'L' to return to the menu",
+                                x=400, y=150,
+                                anchor_x='center', anchor_y='center',
+                                bold=True, font_size=24,
+                                color=(255, 255, 255, 255))
 
     def draw(self):
         self.text.draw()
