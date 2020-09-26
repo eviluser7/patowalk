@@ -541,7 +541,7 @@ class GameState:
     def save(self, duck, filename="patodata.json"):
         state = {}
 
-        state["current_hat"] = duck.hat_wear
+        state["current_hat"] = duck.hat_value
 
         # Saving
         f = open(filename, "w")
@@ -552,7 +552,7 @@ class GameState:
         f = open(filename, "r")
         state = json.load(f)
 
-        duck.hat_wear = state.get("current_hat", duck.hat_0)
+        duck.hat_value = state.get("current_hat", 0)
 
     def state_exists(self, filename="patodata.json"):
         return os.path.isfile(filename)
@@ -868,6 +868,8 @@ class HatSelection(Scene):
             hats.draw()
 
     def update(self, dt):
+        gs = GameState()
+
         if self.back.contain(game.mouse_x, game.mouse_y):
             window.set_mouse_cursor(choose_cur)
 
@@ -879,6 +881,8 @@ class HatSelection(Scene):
         duck.hat_wear.y = duck.y + 35
         duck.sprite.scale = 2.8
         duck.hat_wear.scale = 2.8
+        if gs.state_exists():
+            gs.load(duck)
 
     def on_click(self, x, y, button):
         gs = GameState()
@@ -1080,6 +1084,7 @@ class ParkScene(Scene):
         self.target_text.draw()
 
     def update(self, dt):
+        gs = GameState()
 
         # Linear movement
         if keys[key.W]:
@@ -1151,6 +1156,9 @@ class ParkScene(Scene):
             self.timed_out = False
             win_results = WinScreen()
             game.set_next_scene(win_results)
+
+        if gs.state_exists():
+            gs.load(duck)
 
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
