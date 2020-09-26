@@ -1,3 +1,5 @@
+import json
+import os.path
 import pyglet
 from pyglet import resource
 from pyglet import sprite
@@ -348,6 +350,8 @@ class Player:
         self.hat_8 = sprite.Sprite(self.jimmy_hat)
         self.hat_9 = sprite.Sprite(self.plant_hat)
 
+        self.hat_value = 0
+
         self.hat_wear = self.hat_0
 
     def draw(self):
@@ -411,6 +415,29 @@ class Player:
                 [self.hat_5] else self.y + 15
             self.hat_wear.scale = 1
             self.sprite.scale = 1
+
+        if self.hat_value == 0:
+            self.hat_wear = self.hat_0
+        elif self.hat_value == 1:
+            self.hat_wear = self.hat_1
+        elif self.hat_value == 2:
+            self.hat_wear = self.hat_2
+        elif self.hat_value == 3:
+            self.hat_wear = self.hat_3
+        elif self.hat_value == 4:
+            self.hat_wear = self.hat_4
+        elif self.hat_value == 5:
+            self.hat_wear = self.hat_5
+        elif self.hat_value == 6:
+            self.hat_wear = self.hat_6
+        elif self.hat_value == 7:
+            self.hat_wear = self.hat_7
+        elif self.hat_value == 8:
+            self.hat_wear = self.hat_8
+        elif self.hat_value == 9:
+            self.hat_wear = self.hat_9
+        else:
+            self.hat_value = 0
 
     def change_direction(self, vx, vy, direction):
         self.vx = vx
@@ -506,6 +533,31 @@ class Hud:
                                      bold=True, batch=gui_batch)
 
 
+class GameState:
+
+    def __init__(self):
+        pass
+
+    def save(self, duck, filename="patodata.json"):
+        state = {}
+
+        state["current_hat"] = duck.hat_wear
+
+        # Saving
+        f = open(filename, "w")
+        f.write(json.dumps(state))
+        f.close()
+
+    def load(self, duck, filename="patodata.json"):
+        f = open(filename, "r")
+        state = json.load(f)
+
+        duck.hat_wear = state.get("current_hat", duck.hat_0)
+
+    def state_exists(self, filename="patodata.json"):
+        return os.path.isfile(filename)
+
+
 class SceneObject:
 
     def __init__(self, id, solid, tag, x, y, w=0, h=0, spr=None, visible=True):
@@ -590,6 +642,8 @@ class MenuScene(Scene):
     hat_button = resource.image('hat_button.png')
 
     def __init__(self):
+        gs = GameState()
+
         self.obj_list = []
         self.button = sprite.Sprite(button_raw, x=400, y=200)
         self.button_r = Region(self.button.x - self.button.width // 2,
@@ -611,6 +665,9 @@ class MenuScene(Scene):
                                   font_size=24,
                                   color=(255, 255, 255, 255),
                                   bold=True)
+
+        if gs.state_exists():
+            gs.load(duck)
 
     def draw(self):
         self.bg.draw()
@@ -824,38 +881,50 @@ class HatSelection(Scene):
         duck.hat_wear.scale = 2.8
 
     def on_click(self, x, y, button):
+        gs = GameState()
+
         if self.back.contain(x, y):
             game.set_next_scene(menu)
 
         if self.hat_selectors[0].contain(x, y):
-            duck.hat_wear = duck.hat_1
+            duck.hat_value = 1
+            gs.save(duck)
 
         if self.hat_selectors[1].contain(x, y):
-            duck.hat_wear = duck.hat_2
+            duck.hat_value = 2
+            gs.save(duck)
 
         if self.hat_selectors[2].contain(x, y):
-            duck.hat_wear = duck.hat_3
+            duck.hat_value = 3
+            gs.save(duck)
 
         if self.hat_selectors[3].contain(x, y):
-            duck.hat_wear = duck.hat_4
+            duck.hat_value = 4
+            gs.save(duck)
 
         if self.hat_selectors[4].contain(x, y):
-            duck.hat_wear = duck.hat_5
+            duck.hat_value = 5
+            gs.save(duck)
 
         if self.hat_selectors[5].contain(x, y):
-            duck.hat_wear = duck.hat_6
+            duck.hat_value = 6
+            gs.save(duck)
 
         if self.hat_selectors[6].contain(x, y):
-            duck.hat_wear = duck.hat_7
+            duck.hat_value = 7
+            gs.save(duck)
 
         if self.hat_selectors[7].contain(x, y):
-            duck.hat_wear = duck.hat_8
+            duck.hat_value = 8
+            gs.save(duck)
 
         if self.hat_selectors[8].contain(x, y):
-            duck.hat_wear = duck.hat_9
+            duck.hat_value = 9
+            gs.save(duck)
 
         if self.hat_selectors[9].contain(x, y):
-            duck.hat_wear = duck.hat_0
+            duck.hat_value = 0
+            gs.save(duck)
 
 
 class ParkScene(Scene):
@@ -1270,6 +1339,12 @@ def timer(dt):
     park.decrease_timer(dt)
 
 
+def savestate(dt):
+    if game.scene == hats:
+        gs = GameState()
+        gs.save(duck)
+
+
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
 
@@ -1330,4 +1405,5 @@ park.obj_list.append(water_5)
 park.obj_list.append(water_6)
 
 pyglet.clock.schedule_interval(update, 1/60)
+pyglet.clock.schedule_interval(savestate, 2)
 pyglet.app.run()
