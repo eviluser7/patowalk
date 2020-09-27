@@ -669,6 +669,8 @@ class MenuScene(Scene):
         self.hat_click = sprite.Sprite(self.hat_button, x=700, y=120)
         self.info_region = Region(700, 50, 64, 64)
         self.hat_region = Region(700, 120, 64, 64)
+        self.mode_1_r = Region(236, 86, 170, 25)
+        self.mode_2_r = Region(436, 86, 130, 25)
         self.author = text.Label("Made by eviluser7 in 2020",
                                  x=640, y=15, anchor_x='center',
                                  anchor_y='center', font_size=16,
@@ -679,6 +681,16 @@ class MenuScene(Scene):
                                   font_size=24,
                                   color=(255, 255, 255, 255),
                                   bold=True)
+
+        self.normal_mode = text.Label("Normal Mode", x=320, y=100,
+                                      anchor_x='center', anchor_y='center',
+                                      font_size=16, color=(0, 0, 0, 255),
+                                      bold=True)
+
+        self.free_mode = text.Label("Free Roam", x=500, y=100,
+                                    anchor_x='center', anchor_y='center',
+                                    font_size=16, color=(0, 0, 0, 255),
+                                    bold=True)
 
         if gs.state_exists():
             gs.load(duck)
@@ -691,18 +703,29 @@ class MenuScene(Scene):
         self.hat_click.draw()
         self.author.draw()
         self.version.draw()
+        self.normal_mode.draw()
+        self.free_mode.draw()
         duck.hat_wear.draw()
 
     def update(self, dt):
         if self.button_r.contain(game.mouse_x, game.mouse_y) or \
            self.info_region.contain(game.mouse_x, game.mouse_y) or \
-           self.hat_region.contain(game.mouse_x, game.mouse_y):
+           self.hat_region.contain(game.mouse_x, game.mouse_y) or \
+           self.mode_1_r.contain(game.mouse_x, game.mouse_y) or \
+           self.mode_2_r.contain(game.mouse_x, game.mouse_y):
             window.set_mouse_cursor(choose_cur)
 
         duck.hat_wear.x = 650
         duck.hat_wear.y = 125
         duck.hat_wear.scale = 1
         camera.position = (0, 0)
+
+        if game.mode == NORMAL:
+            self.normal_mode.color = (255, 255, 255, 255)
+            self.free_mode.color = (0, 0, 0, 255)
+        else:
+            self.normal_mode.color = (0, 0, 0, 255)
+            self.free_mode.color = (255, 255, 255, 255)
 
     def on_click(self, x, y, button):
         if self.button_r.contain(x, y) and \
@@ -730,6 +753,12 @@ class MenuScene(Scene):
 
         if self.hat_region.contain(x, y):
             game.set_next_scene(hats)
+
+        if self.mode_1_r.contain(x, y):
+            game.mode = NORMAL
+
+        elif self.mode_2_r.contain(x, y):
+            game.mode = FREE
 
     def on_key_press(self, symbol, modifiers):
         pass
