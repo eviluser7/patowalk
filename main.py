@@ -882,8 +882,6 @@ class HatSelection(Scene):
     def __init__(self):
         self.obj_list = []
         self.back = Region(10, 500, 135, 86)
-        duck.x = 160
-        duck.y = 200
 
         self.hat_icons = [
             sprite.Sprite(self.hat1_select, x=420, y=400),
@@ -941,6 +939,8 @@ class HatSelection(Scene):
         duck.hat_wear.y = duck.y + 35
         duck.sprite.scale = 2.8
         duck.hat_wear.scale = 2.8
+        duck.x = 160
+        duck.y = 200
         if gs.state_exists():
             gs.load(duck)
 
