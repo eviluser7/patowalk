@@ -676,7 +676,7 @@ class MenuScene(Scene):
                                  anchor_y='center', font_size=16,
                                  color=(0, 0, 0, 255),
                                  bold=True)
-        self.version = text.Label("v1.01", x=577, y=326,
+        self.version = text.Label("v1.1", x=577, y=326,
                                   anchor_x='center', anchor_y='center',
                                   font_size=24,
                                   color=(255, 255, 255, 255),
