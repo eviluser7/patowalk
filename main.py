@@ -16,6 +16,8 @@ pyglet.image.Texture.default_min_filter = gl.GL_NEAREST
 
 map_width = 2400
 map_height = 1200
+FREE = "free"
+NORMAL = "normal"
 
 resource.path = ['./resources', './resources/img', './resources/sfx']
 resource.reindex()
@@ -223,6 +225,7 @@ class Game:
         self.on_exit = False
         self.opacity = 0
         self.next_scene = scene
+        self.mode = FREE
 
     def draw(self):
         self.scene.draw()
@@ -486,11 +489,20 @@ class Hud:
                                      anchor_y='center', font_size=24,
                                      bold=True, batch=gui_batch)
 
+        self.leave_text = text.Label("Press L to leave",
+                                     x=100, y=510, anchor_x='center',
+                                     anchor_y='center',
+                                     color=(255, 255, 255, 255),
+                                     font_size=16, bold=True)
+
     def draw(self):
         self.bread_display.draw()
-        self.time_display.draw()
         self.bread_text.draw()
-        self.timer_text.draw()
+        self.leave_text.draw()
+
+        if game.mode == NORMAL:
+            self.time_display.draw()
+            self.timer_text.draw()
 
     def update(self, dt):
         self.update_text()
@@ -500,6 +512,8 @@ class Hud:
         self.bread_display.y = camera.offset_y + 490
         self.bread_text_x = self.bread_text.x = self.bread_display.x + 80
         self.bread_text_y = self.bread_text.y = self.bread_display.y + 42
+        self.leave_text.x = camera.offset_x + 100
+        self.leave_text.y = camera.offset_y + 580
 
         if self.bread_amount != park.target_amount:
             self.bread_text = text.Label(f"{self.bread_amount}",
@@ -688,17 +702,28 @@ class MenuScene(Scene):
         duck.hat_wear.x = 650
         duck.hat_wear.y = 125
         duck.hat_wear.scale = 1
+        camera.position = (0, 0)
 
     def on_click(self, x, y, button):
-        if self.button_r.contain(x, y):
+        if self.button_r.contain(x, y) and \
+           game.mode == NORMAL:
             park.begin()
             game.set_next_scene(park)
             duck.x = 1570
             duck.y = 500
-            game.hud.bread_amount = 50
+            game.hud.bread_amount = 0
             game.hud.timer = 100
             park.update_bread_count()
             amb.play()
+
+        if self.button_r.contain(x, y) and \
+           game.mode == FREE:
+            game.set_next_scene(park)
+            duck.x = 1570
+            duck.y = 500
+            game.hud.bread_amount = 0
+            amb.play()
+            pyglet.clock.schedule_interval(bread_spawn, 2)
 
         if self.info_region.contain(x, y):
             game.set_next_scene(licenses)
@@ -711,6 +736,7 @@ class MenuScene(Scene):
 
     def enter(self):
         quack.play()
+        amb.pause()
 
 
 class Licenses(Scene):
@@ -1146,7 +1172,8 @@ class ParkScene(Scene):
         self.detect_bread_collision()
 
         # Finish game
-        if game.hud.timer <= 0:
+        if game.hud.timer <= 0 and \
+           game.mode == NORMAL:
             self.end_game()
             self.duck_won = False
             self.timed_out = True
@@ -1154,7 +1181,8 @@ class ParkScene(Scene):
             game.set_next_scene(lose_results)
 
         if duck.hitbox.collides(self.exit_region) and \
-           game.hud.bread_amount >= self.target_amount:
+           game.hud.bread_amount >= self.target_amount and \
+           game.mode == NORMAL:
             self.end_game()
             self.duck_won = True
             self.timed_out = False
@@ -1167,8 +1195,13 @@ class ParkScene(Scene):
 
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
-        self.target_text = text.Label(f"{self.target_amount}",
-                                      x=1670, y=510, bold=True)
+
+        if game.mode == NORMAL:
+            self.target_text = text.Label(f"{self.target_amount}",
+                                          x=1670, y=510, bold=True)
+        else:
+            self.target_text = text.Label("Fun",
+                                          x=1670, y=510, bold=True)
 
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, 2)
@@ -1204,8 +1237,8 @@ class ParkScene(Scene):
         pass
 
     def on_key_press(self, symbol, modifiers):
-        if symbol == key.R:
-            self.target_amount = randint(10, 46)
+        if symbol == key.L:
+            game.set_next_scene(menu)
 
     def is_key_pressed(self):
         for _, v in keys.items():
@@ -1371,8 +1404,8 @@ intro = Introduction()
 menu = MenuScene()
 licenses = Licenses()
 hats = HatSelection()
-park = ParkScene()
 game = Game(intro)
+park = ParkScene()
 camera = Camera(scroll_speed=5)
 gui_camera = Camera(scroll_speed=5)
 
