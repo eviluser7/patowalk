@@ -1270,6 +1270,7 @@ class ParkScene(Scene):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == key.L:
+            self.end_game()
             game.set_next_scene(menu)
 
     def is_key_pressed(self):
