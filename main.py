@@ -1219,18 +1219,21 @@ class ParkScene(Scene):
             game.set_next_scene(win_results)
             win_results.play_sound()
 
+        # Change text depending on mode
+        if game.mode == NORMAL:
+            self.target_text = text.Label(f"{self.target_amount}",
+                                          x=1670, y=510, bold=True)
+        elif game.mode == FREE:
+            self.target_text = text.Label("Fun",
+                                          x=1670, y=510, bold=True)
+
         if gs.state_exists():
             gs.load(duck)
 
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
-
-        if game.mode == NORMAL:
-            self.target_text = text.Label(f"{self.target_amount}",
-                                          x=1670, y=510, bold=True)
-        else:
-            self.target_text = text.Label("Fun",
-                                          x=1670, y=510, bold=True)
+        self.target_text = text.Label(f"{self.target_amount}",
+                                      x=1670, y=510, bold=True)
 
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, 2)
