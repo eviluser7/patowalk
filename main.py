@@ -482,18 +482,18 @@ class Hud:
         self.bread_text = text.Label(f"{self.bread_amount}", x=660,
                                      y=533, anchor_x='center',
                                      anchor_y='center', font_size=24,
-                                     bold=True, batch=gui_batch)
+                                     bold=True, font_name='Arial')
         self.timer = 1
         self.timer_text = text.Label(f"{self.timer}", x=660,
                                      y=450, anchor_x='center',
                                      anchor_y='center', font_size=24,
-                                     bold=True, batch=gui_batch)
+                                     bold=True, font_name='Arial')
 
         self.leave_text = text.Label("Press L to leave",
                                      x=100, y=510, anchor_x='center',
                                      anchor_y='center',
                                      color=(255, 255, 255, 255),
-                                     font_size=16, bold=True)
+                                     font_size=16, font_name='Arial')
 
     def draw(self):
         self.bread_display.draw()
@@ -523,7 +523,7 @@ class Hud:
                                          anchor_y='center',
                                          font_size=24,
                                          color=(255, 255, 255, 255),
-                                         bold=True, batch=gui_batch)
+                                         bold=True, font_name='Arial')
         if self.bread_amount >= park.target_amount:
             self.bread_text = text.Label(f"{self.bread_amount}",
                                          x=self.bread_text_x,
@@ -532,7 +532,7 @@ class Hud:
                                          anchor_y='center',
                                          font_size=24,
                                          color=(155, 227, 103, 255),
-                                         bold=True, batch=gui_batch)
+                                         bold=True, font_name='Arial')
 
         self.time_display.x = camera.offset_x + 580
         self.time_display.y = camera.offset_y + 400
@@ -544,7 +544,7 @@ class Hud:
                                      y=self.time_text_y,
                                      anchor_x='center',
                                      anchor_y='center', font_size=24,
-                                     bold=True, batch=gui_batch)
+                                     bold=True, font_name='Arial')
 
 
 class GameState:
@@ -675,22 +675,22 @@ class MenuScene(Scene):
                                  x=640, y=15, anchor_x='center',
                                  anchor_y='center', font_size=16,
                                  color=(0, 0, 0, 255),
-                                 bold=True)
-        self.version = text.Label("v1.1", x=577, y=326,
+                                 bold=True, font_name='Arial')
+        self.version = text.Label("v1.1.1", x=577, y=326,
                                   anchor_x='center', anchor_y='center',
                                   font_size=24,
                                   color=(255, 255, 255, 255),
-                                  bold=True)
+                                  bold=True, font_name='Arial')
 
         self.normal_mode = text.Label("Normal Mode", x=320, y=100,
                                       anchor_x='center', anchor_y='center',
                                       font_size=16, color=(0, 0, 0, 255),
-                                      bold=True)
+                                      bold=True, font_name='Arial')
 
         self.free_mode = text.Label("Free Roam", x=500, y=100,
                                     anchor_x='center', anchor_y='center',
                                     font_size=16, color=(0, 0, 0, 255),
-                                    bold=True)
+                                    bold=True, font_name='Arial')
 
         if gs.state_exists():
             gs.load(duck)
@@ -825,7 +825,8 @@ class Licenses(Scene):
                                          anchor_x='center',
                                          anchor_y='center',
                                          font_size=24, bold=True,
-                                         color=(0, 0, 0, 255))
+                                         color=(0, 0, 0, 255),
+                                         font_name='Arial')
 
     def draw(self):
         self.bg.draw()
@@ -913,7 +914,8 @@ class HatSelection(Scene):
                                x=200, y=400, anchor_x='center',
                                anchor_y='center',
                                color=(255, 255, 255, 255),
-                               bold=True, font_size=10)
+                               bold=True, font_size=10,
+                               font_name='Arial')
 
     def draw(self):
         licenses.bg.draw()
@@ -1113,7 +1115,8 @@ class ParkScene(Scene):
         self.target_amount = randint(10, 46)
         self.timed_out = False
         self.target_text = text.Label(f"{self.target_amount}",
-                                      x=1670, y=510, bold=True)
+                                      x=1670, y=510, bold=True,
+                                      font_name='Arial')
         self.update_bread_count()
 
     def draw(self):
@@ -1222,10 +1225,12 @@ class ParkScene(Scene):
         # Change text depending on mode
         if game.mode == NORMAL:
             self.target_text = text.Label(f"{self.target_amount}",
-                                          x=1670, y=510, bold=True)
+                                          x=1670, y=510, bold=True,
+                                          font_name='Arial')
         elif game.mode == FREE:
             self.target_text = text.Label("Fun",
-                                          x=1670, y=510, bold=True)
+                                          x=1670, y=510, bold=True,
+                                          font_name='Arial')
 
         if gs.state_exists():
             gs.load(duck)
@@ -1233,7 +1238,8 @@ class ParkScene(Scene):
     def update_bread_count(self):
         self.target_amount = randint(10, 46)
         self.target_text = text.Label(f"{self.target_amount}",
-                                      x=1670, y=510, bold=True)
+                                      x=1670, y=510, bold=True,
+                                      font_name='Arial')
 
     def begin(self):
         pyglet.clock.schedule_interval(bread_spawn, 2)
@@ -1292,13 +1298,15 @@ class WinScreen(Scene):
         self.restart = text.Label("Press 'R' to restart", x=400, y=200,
                                   anchor_x='center', anchor_y='center',
                                   bold=True, font_size=24,
-                                  color=(255, 255, 255, 255))
+                                  color=(255, 255, 255, 255),
+                                  font_name='Arial')
 
         self.leave = text.Label("Press 'L' to return to the menu",
                                 x=400, y=150,
                                 anchor_x='center', anchor_y='center',
                                 bold=True, font_size=24,
-                                color=(255, 255, 255, 255))
+                                color=(255, 255, 255, 255),
+                                font_name='Arial')
 
     def draw(self):
         self.text.draw()
@@ -1342,13 +1350,15 @@ class LoseScreen(Scene):
         self.restart = text.Label("Press 'R' to restart", x=400, y=200,
                                   anchor_x='center', anchor_y='center',
                                   bold=True, font_size=24,
-                                  color=(255, 255, 255, 255))
+                                  color=(255, 255, 255, 255),
+                                  font_name='Arial')
 
         self.leave = text.Label("Press 'L' to return to the menu",
                                 x=400, y=150,
                                 anchor_x='center', anchor_y='center',
                                 bold=True, font_size=24,
-                                color=(255, 255, 255, 255))
+                                color=(255, 255, 255, 255),
+                                font_name='Arial')
 
     def draw(self):
         self.text.draw()
